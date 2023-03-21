@@ -1,0 +1,12 @@
+header nav {
+    margin-bottom: 10px;
+}
+
+header {
+    padding: 0;
+}
+
+.router-link-active {
+    /* This class is automatically applied by Vue Router when a route is active */
+    border-bottom: green 5px solid;
+}

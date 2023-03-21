@@ -1,10 +1,10 @@
 <template>
-  <h1>Welcome to Environment Display!</h1>
+  This is the view for a particular room: {{ $route.params.room }}
 </template>
 
 <script>
 export default {
-  name: "MainView"
+  name: "RoomView"
 }
 </script>
 
