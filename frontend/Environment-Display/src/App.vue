@@ -4,16 +4,12 @@ import {reactive} from "vue";
 import {useEnvironmentDataStore} from "@/stores/environmentData"
 // import HelloWorld from './components/HelloWorld.vue'
 
-const data = reactive({
-  rooms: []
-})
-
 const environmentDataStore = useEnvironmentDataStore()
 
 // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
 fetch('http://localhost:8085/rooms')
     .then(res => res.json())
-    .then(json => {data.rooms = json.rooms})
+    .then(json => {environmentDataStore.rooms = json.rooms})
 
 </script>
 
@@ -40,7 +36,7 @@ fetch('http://localhost:8085/rooms')
         </li>
 
 
-        <li v-for="room in data.rooms" :key="room.name">
+        <li v-for="room in environmentDataStore.rooms" :key="room.name">
           <RouterLink :to="{name: 'room', params: {room: room.name}}">{{ room.friendly_name }}</RouterLink>
         </li>
 
@@ -48,8 +44,8 @@ fetch('http://localhost:8085/rooms')
     </nav>
   </header>
   <main>
-    Environment data store: {{ environmentDataStore.environmentData }}
     <RouterView/>
+    Environment data store: {{ environmentDataStore.environmentData }}
   </main>
 
 </template>

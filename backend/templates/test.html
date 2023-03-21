@@ -14,7 +14,7 @@
 <script>
 const socket = io(transports=['websocket']);
 socket.on("data", (data) => {
-    console.log(data);
+    // console.log(data);
     document.getElementById("test").innerHTML += data.data + "<br>";
 });
 

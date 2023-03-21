@@ -4,6 +4,7 @@ import {io} from "socket.io-client";
 
 export const useEnvironmentDataStore = defineStore('environmentData', () => {
     const environmentData = reactive(<Map<string, Map<string, any>>>{}); // Room name -> Dict
+    const rooms = reactive({});
 
     const socket = io("http://localhost:8085");
     socket.on("data", (data: Map<string, Map<string, Map<string, any>>>) => {
@@ -13,12 +14,10 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
 
     function onUpdate(data: Map<string, Map<string, any>>) {
         for (const [roomName, roomData] of Object.entries(data)) {
-            console.log(roomName)
-            console.log(roomData)
             // @ts-ignore
             environmentData[roomName] = roomData;
         }
     }
 
-    return {environmentData, onUpdate}
+    return {environmentData, rooms, onUpdate}
 })
