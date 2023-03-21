@@ -16,6 +16,19 @@ def sample():
     return str(randint(0, 100))
 
 
+@app.route("/rooms")
+def rooms():
+    # Return a list of valid rooms and their friendly names
+    d = {
+        "rooms": [
+            {"name": "davis339a", "friendly_name": "Davis 339A"},
+            {"name": "davis339c", "friendly_name": "Davis 339C"},
+            {"name": "davis339e", "friendly_name": "Davis 339E"},
+        ]
+    }
+    return d
+
+
 def main():
     app.run("0.0.0.0", 8085)
 
