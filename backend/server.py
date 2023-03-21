@@ -5,7 +5,8 @@ from flask_socketio import SocketIO
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:*"}})
-socketio = SocketIO(app)
+# This isn't great for security, but it shouldn't be a problem in the context of this app:
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 
 @app.route("/")
