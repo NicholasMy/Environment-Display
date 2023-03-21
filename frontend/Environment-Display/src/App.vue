@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import {RouterLink, RouterView} from 'vue-router'
 import {reactive} from "vue";
+import {useEnvironmentDataStore} from "@/stores/environmentData"
 // import HelloWorld from './components/HelloWorld.vue'
 
 const data = reactive({
   rooms: []
 })
+
+const environmentDataStore = useEnvironmentDataStore()
 
 // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
 fetch('http://localhost:8085/rooms')
@@ -41,20 +44,11 @@ fetch('http://localhost:8085/rooms')
           <RouterLink :to="{name: 'room', params: {room: room.name}}">{{ room.friendly_name }}</RouterLink>
         </li>
 
-
-        <!--        <li>-->
-        <!--          <RouterLink :to="{name: 'room', params: {room: 'davis339a'}}">Davis 339A</RouterLink>-->
-        <!--        </li>-->
-        <!--        <li>-->
-        <!--          <RouterLink :to="{name: 'room', params: {room: 'davis339c'}}">Davis 339C</RouterLink>-->
-        <!--        </li>-->
-        <!--        <li>-->
-        <!--          <RouterLink :to="{name: 'room', params: {room: 'davis339e'}}">Davis 339E</RouterLink>-->
-        <!--        </li>-->
       </ul>
     </nav>
   </header>
   <main>
+    Environment data store: {{ environmentDataStore.environmentData }}
     <RouterView/>
   </main>
 
