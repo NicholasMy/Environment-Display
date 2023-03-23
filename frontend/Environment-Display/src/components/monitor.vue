@@ -1,14 +1,12 @@
 <template>
   <article>
     <aside>
-      <h1>{{ store.friendlyNamesMap.data }}</h1>
+      <h1>{{ store.friendlyNamesMap[name] || "Unknown friendly room name" }}</h1>
       <!--      TODO get the friendly room name to show-->
 
       <template v-if="store.getDataForRoom(name) != null">
         <h1>{{ store.environmentData[props.name].current }}
           {{ store.environmentData[props.name].units }}</h1>
-
-
       </template>
 
     </aside>

@@ -1,11 +1,12 @@
 import {defineStore} from "pinia";
-import {computed, reactive} from "vue";
+import {computed, reactive, watch} from "vue";
 // @ts-ignore
 import {io} from "socket.io-client";
 
 export const useEnvironmentDataStore = defineStore('environmentData', () => {
     const environmentData = reactive(<Map<string, Map<string, any>>>{}); // Room name -> Dict
-    const rooms = reactive({});
+    const rooms = reactive<Array<Map<string, string>>>({});
+    const friendlyNamesMap = reactive({});
 
     const socket = io("http://localhost:8085");
     socket.on("data", (data: Map<string, Map<string, Map<string, any>>>) => {
@@ -27,16 +28,14 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
         return environmentData[roomName] || null
     }
 
-    const friendlyNamesMap = computed(() => {
-        let ret = {}
-        // @ts-ignore
-        for (const [name, friendly_name] of Object.entries(rooms)) {
-            console.log(name, friendly_name)
-            // @ts-ignore
-            ret[name] = friendly_name
+    watch(rooms, (newVal, oldVal) => {
+        console.log("Rooms changed")
+        for (const i in newVal) {
+            const name = newVal[i].name
+            const friendly_name = newVal[i].friendly_name
+            friendlyNamesMap[name] = friendly_name
         }
-        console.log(ret)
-        return {"data": ret}
+
     })
 
 

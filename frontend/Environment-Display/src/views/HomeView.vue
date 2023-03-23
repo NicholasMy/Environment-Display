@@ -1,7 +1,10 @@
 <template>
   <h1>Welcome to Environment Display!</h1>
 
-  {{ store.rooms }}
+  ROOMS: {{ store.rooms }}
+  <br>
+  Friendly room names: {{ store.friendlyNamesMap }}
+
 
   <p v-for="room in store.rooms" :key="room.name">
     hello

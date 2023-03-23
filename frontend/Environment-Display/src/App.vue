@@ -9,7 +9,9 @@ const environmentDataStore = useEnvironmentDataStore()
 // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
 fetch('http://localhost:8085/rooms')
     .then(res => res.json())
-    .then(json => {environmentDataStore.rooms = json.rooms})
+    // .then(json => {environmentDataStore.rooms = json.rooms})
+    .then(json => {Object.assign(environmentDataStore.rooms, json.rooms)})
+    // That was the major bug! We can't directly reassign to a reactive, or we lose the reactivity.
 
 </script>
 
