@@ -2,11 +2,22 @@ from random import randint
 from flask import Flask, render_template
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from NTIEnvironmentMonitor import NTIEnvironmentMonitor
+from backend import secrets
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:*"}})
 # This isn't great for security, but it shouldn't be a problem in the context of this app:
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+monitors = [
+    NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+    NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+    NTIEnvironmentMonitor("davis339e", "Davis 339E", "https://temp-davis-339e.cse.buffalo.edu/",
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD)
+]
 
 
 @app.route("/")
@@ -28,12 +39,16 @@ def test_page():
 @app.route("/rooms")
 def rooms():
     # Return a list of valid rooms and their friendly names
+
+    rooms_list = []
+    for monitor in monitors:
+        rooms_list.append({
+            "name": monitor.name,
+            "friendly_name": monitor.friendly_name
+        })
+
     d = {
-        "rooms": [
-            {"name": "davis339a", "friendly_name": "Davis 339A"},
-            {"name": "davis339c", "friendly_name": "Davis 339C"},
-            {"name": "davis339e", "friendly_name": "Davis 339E"},
-        ]
+        "rooms": rooms_list
     }
     return d
 
@@ -57,8 +72,15 @@ def get_fake_room_data():
 
     return d
 
+
 def get_data_to_send_client():
-    return {"data": get_fake_room_data()}
+    # return {"data": get_fake_room_data()}
+    data = {}
+
+    for monitor in monitors:
+        data[monitor.name] = monitor.fetch_data()
+
+    return {"data": data}
 
 def background_sender():
     while True:
