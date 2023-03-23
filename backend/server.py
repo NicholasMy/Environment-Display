@@ -3,7 +3,7 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
-from backend import secrets
+from backend import login_secrets as secrets
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:*"}})

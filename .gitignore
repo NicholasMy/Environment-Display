@@ -1,2 +1,2 @@
 /venv/
-/backend/secrets.py
+/backend/login_secrets.py

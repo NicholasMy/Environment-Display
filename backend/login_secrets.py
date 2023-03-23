@@ -1,2 +1,2 @@
-NTI_USERNAME = "changeme"
+NTI_USERNAME = "readonly"
 NTI_PASSWORD = "changeme"

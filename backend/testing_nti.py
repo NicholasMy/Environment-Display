@@ -1,5 +1,5 @@
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
-from backend import secrets
+from backend import login_secrets
 
 def main():
     monitor = NTIEnvironmentMonitor("davis339e", "Davis 339e", "https://temp-davis-339e.cse.buffalo.edu/",
