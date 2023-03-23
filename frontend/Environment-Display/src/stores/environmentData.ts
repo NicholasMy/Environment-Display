@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {computed, reactive, watch} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 // @ts-ignore
 import {io} from "socket.io-client";
 
@@ -7,6 +7,7 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     const environmentData = reactive(<Map<string, Map<string, any>>>{}); // Room name -> Dict
     const rooms = reactive<Array<Map<string, string>>>({});
     const friendlyNamesMap = reactive({});
+    const websocketConnected = ref(false);
 
     const socket = io("http://localhost:8085");
     socket.on("data", (data: Map<string, Map<string, Map<string, any>>>) => {
@@ -14,6 +15,13 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
         onUpdate(data.data)
     })
 
+    socket.on("connect", () => {
+        websocketConnected.value = true;
+    })
+
+    socket.on("disconnect", () => {
+        websocketConnected.value = false;
+    })
 
     function onUpdate(data: Map<string, Map<string, any>>) {
         // @ts-ignore
@@ -39,5 +47,5 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     })
 
 
-    return {environmentData, rooms, onUpdate, getDataForRoom, friendlyNamesMap}
+    return {environmentData, rooms, onUpdate, getDataForRoom, friendlyNamesMap, websocketConnected}
 })
