@@ -1,18 +1,7 @@
 <template>
-  <h1>Welcome to Environment Display!</h1>
+  <h1>Davis Server Room Environmental Monitor</h1>
 
-  ROOMS: {{ store.rooms }}
-  <br>
-  Friendly room names: {{ store.friendlyNamesMap }}
-
-
-  <p v-for="room in store.rooms" :key="room.name">
-    hello
-  </p>
-
-  <monitor v-for="room in store.rooms" :key="room.name" :name="room.name">
-    hello
-  </monitor>
+  <monitor v-for="room in store.rooms" :key="room.name" :name="room.name" />
 
 </template>
 <script setup>

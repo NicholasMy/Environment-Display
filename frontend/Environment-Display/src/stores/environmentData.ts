@@ -20,7 +20,6 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
         for (const [roomName, roomData] of Object.entries(data)) {
             // @ts-ignore
             environmentData[roomName] = roomData;
-            // TODO the data is formatted differently now, so adjust this
         }
     }
 

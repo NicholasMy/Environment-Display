@@ -47,7 +47,6 @@ fetch('http://localhost:8085/rooms')
   </header>
   <main>
     <RouterView/>
-    Environment data store: {{ environmentDataStore.environmentData }}
   </main>
 
 </template>
