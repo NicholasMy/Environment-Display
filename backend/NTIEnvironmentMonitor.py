@@ -1,6 +1,5 @@
 import random
 import requests
-from datetime import datetime
 
 class NTIEnvironmentMonitor:
 
@@ -64,7 +63,5 @@ class NTIEnvironmentMonitor:
                         d[measurement][key] = float(d[measurement][key])
                     except ValueError:
                         pass
-
-        d["time"] = datetime.now().isoformat()
 
         return d

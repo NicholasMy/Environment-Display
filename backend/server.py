@@ -1,3 +1,4 @@
+from datetime import datetime
 from random import randint
 from flask import Flask, render_template
 from flask_cors import CORS
@@ -65,6 +66,8 @@ def get_data_to_send_client():
 
     for monitor in monitors:
         data[monitor.name] = monitor.fetch_data()
+
+    data["time"] = datetime.now().isoformat()
 
     return {"data": data}
 
