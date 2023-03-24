@@ -10,6 +10,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:*"}})
 # This isn't great for security, but it shouldn't be a problem in the context of this app:
 socketio = SocketIO(app, cors_allowed_origins="*")
+CACHED_DATA = None
 
 monitors = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
@@ -50,7 +51,7 @@ def rooms():
 
 @app.route("/data")
 def data():
-    return get_data_to_send_client()
+    return get_data_to_send_client(True)
 
 
 @socketio.on("connect")
@@ -59,14 +60,20 @@ def on_connect():
     socketio.emit("data", get_data_to_send_client())
 
 
-def get_data_to_send_client():
+def get_data_to_send_client(use_cache=False):
+    global CACHED_DATA
     # This is blocking, so it will delay websocket connections while running
+    if use_cache and CACHED_DATA:
+        return {"data": CACHED_DATA}
+
     data = {}
 
     for monitor in monitors:
         data[monitor.name] = monitor.fetch_data()
 
     data["time"] = datetime.now().isoformat()
+
+    CACHED_DATA = data
 
     return {"data": data}
 
