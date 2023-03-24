@@ -1,6 +1,6 @@
 import random
 import requests
-
+from datetime import datetime
 
 class NTIEnvironmentMonitor:
 
@@ -53,5 +53,18 @@ class NTIEnvironmentMonitor:
 
         d["temperature"] = temperature_data
         d["humidity"] = humidity_data
+
+        # Convert strings to ints/floats if possible
+        for measurement in ["temperature", "humidity"]:
+            for key in d[measurement]:
+                try:
+                    d[measurement][key] = int(d[measurement][key])
+                except ValueError:
+                    try:
+                        d[measurement][key] = float(d[measurement][key])
+                    except ValueError:
+                        pass
+
+        d["time"] = datetime.now().isoformat()
 
         return d
