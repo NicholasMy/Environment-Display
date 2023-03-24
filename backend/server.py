@@ -23,18 +23,12 @@ monitors = [
 
 @app.route("/")
 def api():
-    return "Home page"
+    return "Whoops, you probably meant to load the frontend or make a specific API call."
 
 
-@app.route("/sample")
-def sample():
-    # Return a random number
-    return str(randint(0, 100))
-
-
-@app.route("/test")
-def test_page():
-    return render_template("test.html")
+# @app.route("/test")
+# def test_page():
+#     return render_template("test.html")
 
 
 @app.route("/rooms")
@@ -54,6 +48,11 @@ def rooms():
     return d
 
 
+@app.route("/data")
+def data():
+    return get_data_to_send_client()
+
+
 @socketio.on("connect")
 def on_connect():
     print("Client connected")
@@ -70,6 +69,7 @@ def get_data_to_send_client():
     data["time"] = datetime.now().isoformat()
 
     return {"data": data}
+
 
 def background_sender():
     while True:
