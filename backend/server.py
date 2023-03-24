@@ -57,7 +57,7 @@ def data():
 @socketio.on("connect")
 def on_connect():
     print("Client connected")
-    socketio.emit("data", get_data_to_send_client())
+    socketio.emit("data", get_data_to_send_client(True))
 
 
 def get_data_to_send_client(use_cache=False):
@@ -81,6 +81,7 @@ def get_data_to_send_client(use_cache=False):
 def background_sender():
     while True:
         socketio.sleep(2)
+        # This one is NOT cached. We depend on this to keep the cache up to date.
         socketio.emit("data", get_data_to_send_client())
 
 
