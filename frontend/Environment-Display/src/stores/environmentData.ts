@@ -37,7 +37,6 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     }
 
     watch(rooms, (newVal, oldVal) => {
-        console.log("Rooms changed")
         for (const i in newVal) {
             const name = newVal[i].name
             const friendly_name = newVal[i].friendly_name

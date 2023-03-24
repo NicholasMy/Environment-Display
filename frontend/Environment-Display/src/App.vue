@@ -21,7 +21,7 @@ fetch('http://localhost:8085/rooms')
 
   <v-app>
 
-    <v-app-bar color="#005bbb" flat>
+    <v-app-bar color="primary" flat>
 
       <v-tabs hide-slider>
         <v-tab class="rounded-0" :to="{name: 'home'}">
@@ -39,6 +39,7 @@ fetch('http://localhost:8085/rooms')
       <div v-if="!environmentDataStore.websocketConnected">
         <h1>Connecting to WebSocket...</h1>
         <p>If this takes too long, ensure the backend API is running.</p>
+        <v-progress-linear indeterminate color="primary" />
       </div>
       <RouterView v-else/>
     </v-main>
