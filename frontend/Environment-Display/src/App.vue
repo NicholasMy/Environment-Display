@@ -24,42 +24,15 @@ fetch('http://localhost:8085/rooms')
     <v-app-bar color="#005bbb" flat>
 
       <v-tabs hide-slider>
-        <v-tab :to="{name: 'home'}">
-            Environment Display
+        <v-tab class="rounded-0" :to="{name: 'home'}">
+          Environment Display
         </v-tab>
-      </v-tabs>
 
-      <v-spacer/>
-
-      <v-tabs hide-slider>
-        <v-tab :to="{name: 'room', params: {room: room.name}}" v-for="room in environmentDataStore.rooms" :key="room.name">
+        <v-tab class="rounded-0" :to="{name: 'room', params: {room: room.name}}"
+               v-for="room in environmentDataStore.rooms" :key="room.name">
           {{ room.friendly_name }}
         </v-tab>
       </v-tabs>
-
-
-      <!--      <v-tabs>-->
-      <!--        <v-tab>-->
-      <!--          <RouterLink :to="{name: 'home'}">Home</RouterLink>-->
-      <!--        </v-tab>-->
-      <!--        <v-tab v-for="room in environmentDataStore.rooms" :key="room.name">-->
-      <!--          <RouterLink :to="{name: 'room', params: {room: room.name}}">{{ room.friendly_name }}</RouterLink>-->
-      <!--        </v-tab>-->
-
-
-      <!--      </v-tabs>-->
-
-
-      <!--                  <ul>-->
-      <!--                    <li>-->
-      <!--                      <RouterLink :to="{name: 'home'}">Home</RouterLink>-->
-      <!--                    </li>-->
-
-      <!--                    <li v-for="room in environmentDataStore.rooms" :key="room.name">-->
-      <!--                      <RouterLink :to="{name: 'room', params: {room: room.name}}">{{ room.friendly_name }}</RouterLink>-->
-      <!--                    </li>-->
-
-      <!--                  </ul>-->
     </v-app-bar>
     <v-main>
 
@@ -75,5 +48,8 @@ fetch('http://localhost:8085/rooms')
 </template>
 
 <style scoped>
+.v-tab--selected {
+  background-color: #00438c;
+}
 
 </style>
