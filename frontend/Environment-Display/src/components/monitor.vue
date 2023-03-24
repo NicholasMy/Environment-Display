@@ -8,14 +8,20 @@
     <template v-if="store.getDataForRoom(name) != null">
 
       <v-card-item>
-        <h2>{{ store.environmentData[name].temperature.current }}
-          <span v-html="store.environmentData[name].temperature.units"></span></h2>
+        <h2>
+          {{ store.environmentData[name].temperature.current }}
+          <span v-html="store.environmentData[name].temperature.units"></span>
+        </h2>
         <v-progress-linear :model-value="calculateTemperatureProgress(store.environmentData[name].temperature.current)"
                            :color="calculateBarColor(store.environmentData[name].temperature)"
                            height="20" rounded/>
       </v-card-item>
       <v-card-item>
-        <h2>{{ store.environmentData[name].humidity.current }}% RH</h2>
+        <h2>
+          {{ store.environmentData[name].humidity.current }}%
+          <span class="font-weight-regular text-grey" v-if="$vuetify.display.xs">RH</span>
+          <span class="font-weight-regular text-grey" v-else>Relative Humidity</span>
+        </h2>
         <v-progress-linear :model-value="store.environmentData[name].humidity.current"
                            :color="calculateBarColor(store.environmentData[name].humidity)"
                            height="20" rounded/>
