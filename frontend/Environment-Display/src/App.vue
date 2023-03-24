@@ -15,6 +15,12 @@ fetch('http://localhost:8085/rooms')
     })
 // That was the major bug! We can't directly reassign to a reactive, or we lose the reactivity.
 
+function formatDate(dateString: string | undefined) {
+  if (dateString === undefined) return "..."
+  const date = new Date(Date.parse(dateString))
+  return date.toLocaleString('en-US')
+}
+
 </script>
 
 <template>
@@ -43,6 +49,9 @@ fetch('http://localhost:8085/rooms')
       </div>
       <RouterView v-else/>
     </v-main>
+    <v-footer style="max-height: 100px;">
+      <p>Data updated at {{ formatDate(environmentDataStore.environmentData.time)}}</p>
+    </v-footer>
 
   </v-app>
 

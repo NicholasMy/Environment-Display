@@ -1,6 +1,7 @@
 import random
 import requests
 
+
 class NTIEnvironmentMonitor:
 
     def __init__(self, name: str, friendly_name: str, url: str, username: str, password: str):
