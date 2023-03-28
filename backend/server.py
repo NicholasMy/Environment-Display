@@ -18,7 +18,8 @@ monitors = [
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
     NTIEnvironmentMonitor("davis339e", "Davis 339E", "https://temp-davis-339e.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD)
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+#     NTIEnvironmentMonitor("fake", "Fake", "https://fakedomain.nicholasmy.com", "A", "B"),
 ]
 
 
@@ -69,7 +70,14 @@ def get_data_to_send_client(use_cache=False):
     data = {}
 
     for monitor in monitors:
-        data[monitor.name] = monitor.fetch_data()
+        try:
+            data[monitor.name] = monitor.fetch_data()
+            data[monitor.name]["success"] = True
+        except Exception as e:
+            print(e)
+            data[monitor.name] = {
+                "success": False,
+            }
 
     data["time"] = datetime.now().isoformat()
 

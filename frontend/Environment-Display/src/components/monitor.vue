@@ -5,15 +5,26 @@
       <h2>{{ store.friendlyNamesMap[name] || "Unknown friendly room name" }}</h2>
     </v-card-title>
 
-    <template v-if="store.getDataForRoom(name) != null">
+    <template v-if="store.getDataForRoom(name) == null">
+      <v-card-item>
+        <h1>Waiting for sensor data...</h1>
+      </v-card-item>
+    </template>
+    <template v-else-if="!store.getDataForRoom(name).success">
+      <v-card-item>
+        <h2 class="text-red">Error connecting to sensor.</h2>
+        <p>Check the console output for more information.</p>
+      </v-card-item>
+    </template>
 
+    <template v-else>
       <v-card-item>
         <h2>
           {{ store.environmentData[name].temperature.current }}
           <span v-html="store.environmentData[name].temperature.units"></span>
           <template v-if="isUsingFahrenheit()">
             <span class="font-weight-regular text-grey">
-              / {{fahrenheitToCelsius(store.environmentData[name].temperature.current).toFixed(1)}} &deg;C
+              / {{ fahrenheitToCelsius(store.environmentData[name].temperature.current).toFixed(1) }} &deg;C
             </span>
           </template>
         </h2>
@@ -35,9 +46,6 @@
       <v-card-item>
         <slot></slot>
       </v-card-item>
-    </template>
-    <template v-else>
-      <h1>Waiting for sensor data...</h1>
     </template>
   </v-card>
 
