@@ -11,6 +11,11 @@
         <h2>
           {{ store.environmentData[name].temperature.current }}
           <span v-html="store.environmentData[name].temperature.units"></span>
+          <template v-if="isUsingFahrenheit()">
+            <span class="font-weight-regular text-grey">
+              / {{fahrenheitToCelsius(store.environmentData[name].temperature.current).toFixed(1)}} &deg;C
+            </span>
+          </template>
         </h2>
         <v-progress-linear :model-value="calculateTemperatureProgress(store.environmentData[name].temperature.current)"
                            :color="calculateBarColor(store.environmentData[name].temperature)"
@@ -67,6 +72,14 @@ function calculateBarColor(data: Map<string, any>) {
   } else {
     return "green"
   }
+}
+
+function isUsingFahrenheit(): boolean {
+  return store.environmentData[props.name].temperature.units === "&deg;F"
+}
+
+function fahrenheitToCelsius(fahrenheit: number): number {
+  return (fahrenheit - 32) * 5 / 9
 }
 
 </script>
