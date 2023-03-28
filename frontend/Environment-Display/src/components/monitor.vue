@@ -32,6 +32,9 @@
                            height="20" rounded/>
 
       </v-card-item>
+      <v-card-item>
+        <slot></slot>
+      </v-card-item>
     </template>
     <template v-else>
       <h1>Waiting for sensor data...</h1>

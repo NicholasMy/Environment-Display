@@ -1,7 +1,9 @@
 <template>
 
   <div class="d-flex justify-center">
-    <monitor :name="$route.params.room"/>
+    <monitor :name="$route.params.room">
+      <v-btn class="bg-blue-darken-4" :href="store.environmentData[$route.params.room].url" target="_blank">Manage</v-btn>
+    </monitor>
   </div>
 
   <v-expansion-panels class="pa-4">

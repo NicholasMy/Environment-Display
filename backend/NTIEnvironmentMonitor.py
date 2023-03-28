@@ -53,6 +53,7 @@ class NTIEnvironmentMonitor:
 
         d["temperature"] = temperature_data
         d["humidity"] = humidity_data
+        d["url"] = self.url
 
         # Convert strings to ints/floats if possible
         for measurement in ["temperature", "humidity"]:
