@@ -8,6 +8,8 @@ services:
 #      - "8085:8085"
     expose:
       - "8085"
+    environment:
+      TZ: "America/New_York"
   frontend:
     build: frontend
     restart: always
