@@ -1,6 +1,5 @@
 from datetime import datetime
-from random import randint
-from flask import Flask, render_template
+from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
