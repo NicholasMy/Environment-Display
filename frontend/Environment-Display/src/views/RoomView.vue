@@ -1,9 +1,9 @@
 <template>
 
   <div class="d-flex justify-center">
-    <monitor :name="$route.params.room">
-      <v-btn class="bg-blue-darken-4" :href="store.environmentData[$route.params.room].url" target="_blank">Manage</v-btn>
-    </monitor>
+    <Monitor :name="$route.params.room">
+      <MonitorExtendedAttributes :room="$route.params.room" />
+    </Monitor>
   </div>
 
   <v-expansion-panels class="pa-4">
@@ -19,12 +19,13 @@
 
 <script setup>
 import {useEnvironmentDataStore} from "@/stores/environmentData";
+import MonitorExtendedAttributes from "@/components/MonitorExtendedAttributes.vue";
 
 const store = useEnvironmentDataStore()
 </script>
 
 <script>
-import Monitor from "@/components/monitor.vue";
+import Monitor from "@/components/Monitor.vue";
 
 export default {
   name: "RoomView",

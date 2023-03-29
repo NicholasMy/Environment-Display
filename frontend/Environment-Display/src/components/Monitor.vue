@@ -20,7 +20,7 @@
     <template v-else>
       <v-card-item>
         <h2>
-          {{ store.environmentData[name].temperature.current }}
+          {{ store.environmentData[name].temperature.current.toFixed(1) }}
           <span v-html="store.environmentData[name].temperature.units"></span>
           <template v-if="isUsingFahrenheit()">
             <span class="font-weight-regular text-grey">

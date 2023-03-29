@@ -61,5 +61,11 @@ function formatDate(dateString: string | undefined) {
 .v-tab--selected {
   background-color: #00438c;
 }
+</style>
 
+<style>
+/* Remove default uppercase text from Material Design */
+* {
+  text-transform: none;
+}
 </style>

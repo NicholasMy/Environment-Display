@@ -16,7 +16,7 @@ const store = useEnvironmentDataStore();
 </script>
 
 <script>
-import Monitor from "@/components/monitor.vue";
+import Monitor from "@/components/Monitor.vue";
 
 
 export default {
