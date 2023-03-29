@@ -5,17 +5,18 @@ services:
     build: backend
     restart: always
 #    ports:
-#      - "8085:8085"
+#      - "8085:8085"  # Uncomment this for local debugging, but don't bind to host in production
     expose:
       - "8085"
     environment:
       TZ: "America/New_York"
+      CORS_ALLOWED_ORIGINS: ""  # Change this in production!
   frontend:
     build: frontend
     restart: always
     ports:
       - "80:80"
       - "443:443"
-      - "8085:8085"
+      - "8085:8085"  # For API proxying to backend through Nginx
     volumes:
       - ./data/frontend/logs:/var/log/nginx

@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from flask import Flask
 from flask_cors import CORS
@@ -5,10 +6,14 @@ from flask_socketio import SocketIO
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
 import login_secrets as secrets
 
+cors_allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
+# We might need to do something special if there are multiple origins, but this is fine for now
+if cors_allowed_origins == "*":
+    print("Warning: CORS_ALLOWED_ORIGINS is set to *! This should not be used in production! "
+          "Change it in docker-compose.yml.")
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:*"}})
-# This isn't great for security, but it shouldn't be a problem in the context of this app:
-socketio = SocketIO(app, cors_allowed_origins="*")
+CORS(app, resources={r"/*": {"origins": cors_allowed_origins}})
+socketio = SocketIO(app, cors_allowed_origins=cors_allowed_origins)
 CACHED_DATA = None
 
 monitors = [
