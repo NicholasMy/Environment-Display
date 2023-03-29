@@ -34,7 +34,7 @@
       </v-card-item>
       <v-card-item>
         <h2>
-          {{ store.environmentData[name].humidity.current }}%
+          {{ store.environmentData[name].humidity.current.toFixed(1) }}%
           <span class="font-weight-regular text-grey" v-if="$vuetify.display.xs">RH</span>
           <span class="font-weight-regular text-grey" v-else>Relative Humidity</span>
         </h2>
