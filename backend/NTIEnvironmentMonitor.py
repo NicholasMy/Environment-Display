@@ -20,8 +20,7 @@ class NTIEnvironmentMonitor:
             "password": self.password,
             "random": random.random()
         }
-        resp = requests.post(login_url, data=data, verify=False)
-        # These monitors seem to use a really weak HTTPS certificate, so we need to disable verification
+        resp = requests.post(login_url, data=data)
         resp = resp.json()
         success = resp["success"]
         if success == "true":
@@ -43,9 +42,8 @@ class NTIEnvironmentMonitor:
         humidity_url = self.url + "goform/sensorStatus?id=1"
 
         try:
-            temperature_data = requests.get(temperature_url, cookies={"session": self.session_cookie},
-                                            verify=False).json()
-            humidity_data = requests.get(humidity_url, cookies={"session": self.session_cookie}, verify=False).json()
+            temperature_data = requests.get(temperature_url, cookies={"session": self.session_cookie}).json()
+            humidity_data = requests.get(humidity_url, cookies={"session": self.session_cookie}).json()
         except Exception as e:
             # If that failed, we probably need a new session
             self.create_session()
