@@ -46,6 +46,16 @@
       <v-card-item>
         <slot></slot>
       </v-card-item>
+
+      <v-card-item>
+        <MulticolorProgressBar :min="minTemp" :max="maxTemp"
+                               :warning="store.environmentData[name].temperature.maxWThresh"
+                               :critical="store.environmentData[name].temperature.maxThresh"
+                               :value="80"/>
+<!--                               :value="store.environmentData[name].temperature.current"/>-->
+      </v-card-item>
+
+
     </template>
   </v-card>
 
@@ -59,16 +69,17 @@ export default {
 <script setup lang="ts">
 import {useEnvironmentDataStore} from "@/stores/environmentData";
 import {reactive} from "vue";
+import MulticolorProgressBar from "@/components/MulticolorProgressBar.vue";
 
 const props = defineProps({
   name: String,
 })
 const store = useEnvironmentDataStore()
+const minTemp = 55
+const maxTemp = 90
 
 function calculateTemperatureProgress(temperature: number) {
-  const min = 55
-  const max = 90
-  return (temperature - min) / (max - min) * 100
+  return (temperature - minTemp) / (maxTemp - minTemp) * 100
 }
 
 function calculateBarColor(data: Map<string, any>) {
