@@ -28,9 +28,10 @@
             </span>
           </template>
         </h2>
-        <v-progress-linear :model-value="calculateTemperatureProgress(store.environmentData[name].temperature.current)"
-                           :color="calculateBarColor(store.environmentData[name].temperature)"
-                           height="20" rounded/>
+        <MulticolorProgressBar :min="minTemp" :max="maxTemp"
+                               :warning="store.environmentData[name].temperature.maxWThresh"
+                               :critical="store.environmentData[name].temperature.maxThresh"
+                               :value="store.environmentData[name].temperature.current"/>
       </v-card-item>
       <v-card-item>
         <h2>
@@ -38,24 +39,14 @@
           <span class="font-weight-regular text-grey" v-if="$vuetify.display.xs">RH</span>
           <span class="font-weight-regular text-grey" v-else>Relative Humidity</span>
         </h2>
-        <v-progress-linear :model-value="store.environmentData[name].humidity.current"
-                           :color="calculateBarColor(store.environmentData[name].humidity)"
-                           height="20" rounded/>
-
+        <MulticolorProgressBar :min="0" :max="100"
+                               :warning="store.environmentData[name].humidity.maxWThresh"
+                               :critical="store.environmentData[name].humidity.maxThresh"
+                               :value="store.environmentData[name].humidity.current"/>
       </v-card-item>
       <v-card-item>
         <slot></slot>
       </v-card-item>
-
-      <v-card-item>
-        <MulticolorProgressBar :min="minTemp" :max="maxTemp"
-                               :warning="store.environmentData[name].temperature.maxWThresh"
-                               :critical="store.environmentData[name].temperature.maxThresh"
-                               :value="80"/>
-<!--                               :value="store.environmentData[name].temperature.current"/>-->
-      </v-card-item>
-
-
     </template>
   </v-card>
 
