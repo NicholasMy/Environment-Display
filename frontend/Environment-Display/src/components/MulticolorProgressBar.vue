@@ -51,9 +51,9 @@ const normalBarColor = computed(() => {
   } else if (props.value < props.warning) {
     return "green"
   } else if (props.value < props.critical) {
-    return "yellow"
+    return "yellow-lighten-3"
   } else {
-    return "red"
+    return "red-lighten-3"
   }
 })
 
@@ -61,9 +61,9 @@ const warningBarColor = computed(() => {
   if (props.value <= props.min) {
     return "light-blue"
   } else if (props.value < props.critical) {
-    return "yellow"
+    return "yellow-darken-1"
   } else {
-    return "red"
+    return "red-lighten-2"
   }
 })
 
@@ -86,19 +86,22 @@ const warningBarPercent = computed(() => {
   if (props.value <= props.min) {
     return 100
   }
-  return (props.value - props.warning) / (props.critical - props.warning) * 100
+  return Math.max(props.value - props.warning, 0.0) / (props.critical - props.warning) * 100
 })
 
 const criticalBarPercent = computed(() => {
   if (props.value <= props.min) {
     return 100
   }
-  return (props.value - props.critical) / (props.max - props.critical) * 100
+  return Math.max(props.value - props.critical, 0.0) / (props.max - props.critical) * 100
 })
 
 
 </script>
 
 <style scoped>
+:deep(.v-progress-linear__determinate) {
+  transition: none !important
+}
 
 </style>
