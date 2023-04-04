@@ -4,8 +4,8 @@ services:
   backend:
     build: backend
     restart: always
-#    ports:
-#      - "8085:8085"  # Uncomment this for local debugging, but don't bind to host in production
+    #    ports:
+    #      - "8085:8085"  # Uncomment this for local debugging, but don't bind to host in production
     expose:
       - "8085"
     environment:
@@ -14,9 +14,17 @@ services:
   frontend:
     build: frontend
     restart: always
+    depends_on:
+      frontend-build:
+        condition: service_completed_successfully
     ports:
       - "80:80"
-      - "443:443"
       - "8085:8085"  # For API proxying to backend through Nginx
     volumes:
       - ./data/frontend/logs:/var/log/nginx
+  frontend-build:
+    build:
+      context: frontend
+      dockerfile: Dockerfile-build
+    volumes:
+      - ./frontend/Environment-Display/dist:/app/Environment-Display/dist
