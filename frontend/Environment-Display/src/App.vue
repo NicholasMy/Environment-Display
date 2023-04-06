@@ -7,7 +7,7 @@ import {useEnvironmentDataStore} from "@/stores/environmentData"
 const environmentDataStore = useEnvironmentDataStore()
 
 // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
-fetch('http://localhost:8085/rooms')
+fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/rooms`)
     .then(res => res.json())
     // .then(json => {environmentDataStore.rooms = json.rooms})
     .then(json => {
