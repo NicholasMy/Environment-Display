@@ -27,7 +27,7 @@ function formatDate(dateString: string | undefined) {
 
   <v-app>
 
-    <v-app-bar color="primary" flat>
+    <v-app-bar color="primary" flat absolute>
 
       <v-tabs hide-slider>
         <v-tab class="rounded-0" :to="{name: 'home'}">
@@ -49,7 +49,7 @@ function formatDate(dateString: string | undefined) {
       </div>
       <RouterView v-else/>
     </v-main>
-    <v-footer style="max-height: 100px;">
+    <v-footer style="max-height: 100px;" class="mt-8 pa-4">
       <p>Data updated at {{ formatDate(environmentDataStore.environmentData.time)}}</p>
     </v-footer>
 
