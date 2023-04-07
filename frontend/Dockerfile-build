@@ -4,4 +4,4 @@ WORKDIR /app/Environment-Display
 
 COPY Environment-Display .
 RUN npm install
-CMD npm run build
+CMD rm -rf dist/* && npm run build
