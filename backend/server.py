@@ -1,10 +1,13 @@
 import os
 from datetime import datetime
+from typing import List
+
 from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
 import login_secrets as secrets
+from backend.EnvironmentalMonitor import EnvironmentalMonitor
 
 cors_allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
 # We might need to do something special if there are multiple origins, but this is fine for now
@@ -16,7 +19,7 @@ CORS(app, resources={r"/*": {"origins": cors_allowed_origins}})
 socketio = SocketIO(app, cors_allowed_origins=cors_allowed_origins)
 CACHED_DATA = None
 
-monitors = [
+monitors: List[EnvironmentalMonitor] = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",

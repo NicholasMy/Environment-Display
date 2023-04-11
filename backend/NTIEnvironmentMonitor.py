@@ -1,11 +1,14 @@
 import random
 import requests
 
+from backend.EnvironmentalMonitor import EnvironmentalMonitor
 
-class NTIEnvironmentMonitor:
+
+class NTIEnvironmentMonitor(EnvironmentalMonitor):
 
     def __init__(self, name: str, friendly_name: str, url: str, username: str, password: str):
         # The URL should look like "https://temp-davis-339e.cse.buffalo.edu/"
+        super().__init__()
         self.name = name
         self.friendly_name = friendly_name
         self.url = url
