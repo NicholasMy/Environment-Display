@@ -8,6 +8,7 @@ from flask_socketio import SocketIO
 from NTIEnvironmentMonitor import NTIEnvironmentMonitor
 import login_secrets as secrets
 from backend.EnvironmentalMonitor import EnvironmentalMonitor
+from backend.OlderNTIEnvironmentMonitor import OlderNTIEnvironmentMonitor
 
 cors_allowed_origins = os.environ.get("CORS_ALLOWED_ORIGINS", "*")
 # We might need to do something special if there are multiple origins, but this is fine for now
@@ -26,6 +27,9 @@ monitors: List[EnvironmentalMonitor] = [
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
     NTIEnvironmentMonitor("davis339e", "Davis 339E", "https://temp-davis-339e.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+    OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Old", "http://enviromux-davis-339a.cse.buffalo.edu/"),
+    OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Old", "http://enviromux-davis-339c.cse.buffalo.edu/"),
+    OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E Old", "http://enviromux-davis-339e.cse.buffalo.edu/"),
 #     NTIEnvironmentMonitor("fake", "Fake", "https://fakedomain.nicholasmy.com", "A", "B"),
 ]
 
@@ -101,10 +105,10 @@ def background_sender():
 
 
 def main():
-    # app.run("0.0.0.0", 8085)
+    app.run("0.0.0.0", 8085)
     # threading.Thread(target=background_sender).start()
-    socketio.start_background_task(target=background_sender)
-    socketio.run(app, "0.0.0.0", 8085)
+    # socketio.start_background_task(target=background_sender)
+    # socketio.run(app, "0.0.0.0", 8085, debug=True)
     # socketio.run(app)
 
 

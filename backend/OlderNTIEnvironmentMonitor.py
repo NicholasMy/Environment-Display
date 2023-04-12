@@ -1,4 +1,3 @@
-import random
 from typing import Tuple, Dict, Any
 
 import requests
@@ -8,34 +7,18 @@ from backend.EnvironmentalMonitor import EnvironmentalMonitor
 
 class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
 
-    def __init__(self, name: str, friendly_name: str, url: str, username: str, password: str):
+    def __init__(self, name: str, friendly_name: str, url: str):
         # The URL should look like "http://enviromux-davis-339e.cse.buffalo.edu/"
         super().__init__()
         self.name = name
         self.friendly_name = friendly_name
         self.url = url
-        self.username = username
-        self.password = password
         self.session_cookie = None
 
     def create_session(self):
-        login_url: str = self.url + "index.html"
-        data = {
-            "a": self.username,
-            "b": self.password,
-        }
-        resp = requests.post(login_url, data=data, timeout=10)
-        success = resp.status_code == 200
-        if success:
-            # For some reason, the cookie name is empty. What a great idea /s. We gotta read it this weird way.
-            cookie = resp.raw.headers.get("Set-Cookie")
-            print(cookie)
-            if not cookie:
-                print(resp.headers)
-                raise Exception("Could not find cookie")
-            self.session_cookie = cookie
-        else:
-            raise Exception(f"Login failed to: {self.url}")
+        pass
+        # We're using guest access, no need to log in
+        # They only support HTTP anyway, so it's more secure than sending a password to a privileged account
 
 
     @staticmethod
@@ -54,6 +37,8 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         # This is the line that contains the data we want
         lines = text.splitlines()
         data_line = None
+
+        # Find the line we care about
         for line in lines:
             if line.startswith("var haParams ="):
                 data_line = line
@@ -62,12 +47,25 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         if not data_line:
             raise Exception("Could not find data line")
 
+        # Extract all the data from that one important line in a super ugly format
         data_arrays = data_line.split("new Array")
-        print()
+        for pair in [(d_temperature, 3), (d_humidity, 5)]:
+            d, index = pair
+            raw_values = data_arrays[index].split(",")
+            for i, value in enumerate(raw_values):
+                if value.startswith("\"") and value.endswith("\""):
+                    raw_values[i] = value[1:-1]
+                    try:
+                        # Try to convert to floats
+                        raw_values[i] = float(raw_values[i])
+                    except ValueError:
+                        pass
+            d["current"] = raw_values[1]
+            d["units"] = raw_values[2]
+            d["maxThresh"] = raw_values[11]
+            d["maxWThresh"] = raw_values[11]  # These older monitors don't have a separate warning/critical threshold
 
-
-
-
+        return d_temperature, d_humidity
 
     def fetch_data(self):
         d = {
@@ -75,24 +73,19 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
             "friendly_name": self.friendly_name,
         }
 
-        if not self.session_cookie:
-            self.create_session()
-
         data_url = self.url + "Updater.html"
 
         try:
-            data = requests.get(data_url, headers={"Cookie": self.session_cookie}, timeout=10)
+            data = requests.get(data_url, timeout=10)
             assert data.status_code == 200
             text = data.text
             parsed_temperature, parsed_humidity = self.parse_ugly_data(text)
-
+            d["temperature"] = parsed_temperature
+            d["humidity"] = parsed_humidity
         except Exception as e:
-            # If that failed, we probably need a new session
-            self.create_session()
-            return self.fetch_data()
+            # Ignore errors
+            print(e)
 
-        d["temperature"] = parsed_temperature
-        d["humidity"] = parsed_humidity
         d["url"] = self.url
 
         return d
