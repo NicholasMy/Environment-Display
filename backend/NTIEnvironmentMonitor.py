@@ -17,6 +17,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         self.session_cookie = None
 
     def create_session(self):
+        print("Creating session" + self.url)
         login_url: str = self.url + "goform/login"
         data = {
             "username": self.username,
@@ -33,6 +34,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
             raise Exception(f"Login failed to: {self.url}")
 
     def fetch_data(self):
+        print("Fetching data" + self.url)
         d = {
             "name": self.name,
             "friendly_name": self.friendly_name,

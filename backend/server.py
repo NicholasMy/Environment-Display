@@ -105,10 +105,10 @@ def background_sender():
 
 
 def main():
-    app.run("0.0.0.0", 8085)
+    # app.run("0.0.0.0", 8085)
     # threading.Thread(target=background_sender).start()
-    # socketio.start_background_task(target=background_sender)
-    # socketio.run(app, "0.0.0.0", 8085, debug=True)
+    socketio.start_background_task(target=background_sender)
+    socketio.run(app, "0.0.0.0", 8085)
     # socketio.run(app)
 
 

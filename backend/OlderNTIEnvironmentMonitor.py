@@ -16,6 +16,8 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         self.session_cookie = None
 
     def create_session(self):
+        print("Creating session" + self.url)
+
         pass
         # We're using guest access, no need to log in
         # They only support HTTP anyway, so it's more secure than sending a password to a privileged account
@@ -68,6 +70,8 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         return d_temperature, d_humidity
 
     def fetch_data(self):
+        print("Fetching data" + self.url)
+
         d = {
             "name": self.name,
             "friendly_name": self.friendly_name,
