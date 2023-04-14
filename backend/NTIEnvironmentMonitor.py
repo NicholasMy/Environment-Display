@@ -17,14 +17,14 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         self.session_cookie = None
 
     def create_session(self):
-        print("Creating session" + self.url)
+        # print("Creating session " + self.url)
         login_url: str = self.url + "goform/login"
         data = {
             "username": self.username,
             "password": self.password,
             "random": random.random()
         }
-        resp = requests.post(login_url, data=data)
+        resp = requests.post(login_url, data=data, timeout=10)
         resp = resp.json()
         success = resp["success"]
         if success == "true":
@@ -34,7 +34,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
             raise Exception(f"Login failed to: {self.url}")
 
     def fetch_data(self):
-        print("Fetching data" + self.url)
+        # print("Fetching data " + self.url)
         d = {
             "name": self.name,
             "friendly_name": self.friendly_name,
@@ -47,8 +47,8 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         humidity_url = self.url + "goform/sensorStatus?id=1"
 
         try:
-            temperature_data = requests.get(temperature_url, cookies={"session": self.session_cookie}).json()
-            humidity_data = requests.get(humidity_url, cookies={"session": self.session_cookie}).json()
+            temperature_data = requests.get(temperature_url, cookies={"session": self.session_cookie}, timeout=10).json()
+            humidity_data = requests.get(humidity_url, cookies={"session": self.session_cookie}, timeout=10).json()
         except Exception as e:
             # If that failed, we probably need a new session
             self.create_session()

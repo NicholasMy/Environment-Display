@@ -16,7 +16,7 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         self.session_cookie = None
 
     def create_session(self):
-        print("Creating session" + self.url)
+        # print("Creating session " + self.url)
 
         pass
         # We're using guest access, no need to log in
@@ -70,7 +70,7 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         return d_temperature, d_humidity
 
     def fetch_data(self):
-        print("Fetching data" + self.url)
+        # print("Fetching data " + self.url)
 
         d = {
             "name": self.name,

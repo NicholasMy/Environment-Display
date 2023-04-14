@@ -6,4 +6,6 @@ class EnvironmentalMonitor:
         raise NotImplementedError
 
     def __init__(self):
-        pass
+        self.name = None
+        self.friendly_name = None
+        self.url = None
