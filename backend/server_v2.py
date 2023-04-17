@@ -4,7 +4,7 @@ from datetime import datetime
 from time import sleep
 
 import socketio
-
+from tornado import ioloop
 import login_secrets as secrets
 from typing import List, Optional, Awaitable
 from threading import Lock, Thread
@@ -72,23 +72,24 @@ class DataHandler(BaseHandler):
 
 
 @sio.on('connect')
-async def connect(sid, b, c):
-    print("Socket connected")
-    print(sid, b, c)
-    # TODO track set of connections, send data on first connection, send updates in background
+async def connect(sid, environ, auth):
+    # Send the initial state when connecting
+    await sio.emit("data", get_data(), room=sid)
 
 
 @sio.on('disconnect')
 async def disconnect(sid):
-    print("Socket disconnected")
-    print(sid)
+    pass
 
 
 def get_data():
     global CACHE
     # Add the time the data was fetched
-    ret = CACHE.copy()
-    ret["time"] = datetime.now().isoformat()
+    data = CACHE.copy()
+    data["time"] = datetime.now().isoformat()
+    ret = {
+        "data": data
+    }
     return ret
 
 
@@ -113,6 +114,19 @@ def background_updater():
         sleep(1)
 
 
+async def background_sender():
+    global CACHE_LOCK
+    global CACHE_UPDATED
+    CACHE_LOCK.acquire()
+    if CACHE_UPDATED:
+        CACHE_UPDATED = False
+        CACHE_LOCK.release()
+        await sio.emit("data", get_data())
+        CACHE_UPDATED = False
+    else:
+        CACHE_LOCK.release()
+
+
 async def initialize():
     global CACHE
     global CACHE_LOCK
@@ -125,8 +139,10 @@ async def main():
     await initialize()
     global sio
 
-    background_thread = Thread(target=background_updater)
-    background_thread.start()
+    background_updater_thread = Thread(target=background_updater)
+    background_updater_thread.start()
+
+    ioloop.PeriodicCallback(background_sender, 1000).start()
 
     app = tornado.web.Application([
         (r"/", MainHandler),
