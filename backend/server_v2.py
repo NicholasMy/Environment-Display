@@ -29,11 +29,11 @@ monitors: List[EnvironmentalMonitor] = [
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
-    NTIEnvironmentMonitor("davis339e", "Davis 339E", "https://temp-davis-339e.cse.buffalo.edu/",
+    NTIEnvironmentMonitor("davis339e", "Davis 339E North", "https://temp-davis-339e.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
-    OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Old", "http://enviromux-davis-339a.cse.buffalo.edu/"),
-    OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Old", "http://enviromux-davis-339c.cse.buffalo.edu/"),
-    OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E Old", "http://enviromux-davis-339e.cse.buffalo.edu/"),
+    OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Hot Aisle", "http://enviromux-davis-339a.cse.buffalo.edu/"),
+    OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Hot Aisle", "http://enviromux-davis-339c.cse.buffalo.edu/"),
+    OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E South", "http://enviromux-davis-339e.cse.buffalo.edu/"),
 ]
 
 
