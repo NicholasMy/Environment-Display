@@ -88,7 +88,8 @@ function calculateBarColor(data: Map<string, any>) {
 }
 
 function isUsingFahrenheit(): boolean {
-  return store.environmentData[props.name].temperature.units === "&deg;F"
+  return store.environmentData[props.name].temperature.units === "&deg;F" ||
+      store.environmentData[props.name].temperature.units === "°F"
 }
 
 function fahrenheitToCelsius(fahrenheit: number): number {
