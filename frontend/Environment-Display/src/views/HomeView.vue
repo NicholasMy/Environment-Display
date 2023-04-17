@@ -1,5 +1,9 @@
 <template>
-  <h1 class="ms-4">Davis Server Room Environmental Monitor</h1>
+
+  <div class="d-flex align-center flex-column">
+    <h1 class="ms-4">Davis Server Room Environmental Monitor</h1>
+  </div>
+
 
   <div class="d-flex flex-wrap justify-center">
     <monitor v-for="room in store.rooms" :key="room.name" :name="room.name"/>

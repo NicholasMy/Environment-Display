@@ -42,15 +42,17 @@ function formatDate(dateString: string | undefined) {
     </v-app-bar>
     <v-main>
 
-      <div v-if="!environmentDataStore.websocketConnected">
-        <h1>Connecting to WebSocket...</h1>
-        <p>If this takes too long, ensure the backend API is running.</p>
-        <v-progress-linear indeterminate color="primary" />
+      <div class="d-flex align-center flex-column" v-if="!environmentDataStore.websocketConnected">
+        <v-card class="pa-8 ma-4">
+          <h1>Connecting to WebSocket...</h1>
+          <p>If this takes too long, ensure the backend API is running.</p>
+          <v-progress-linear class="mt-4" height="10" rounded rounded-bar indeterminate color="primary"/>
+        </v-card>
       </div>
-      <RouterView v-else/>
+      <RouterView/>
     </v-main>
     <v-footer style="max-height: 100px;" class="mt-8 pa-4">
-      <p>Data updated at {{ formatDate(environmentDataStore.environmentData.time)}}</p>
+      <p>Data updated at {{ formatDate(environmentDataStore.environmentData.time) }}</p>
     </v-footer>
 
   </v-app>

@@ -9,7 +9,7 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     const friendlyNamesMap = reactive({});
     const websocketConnected = ref(false);
 
-    const socket = io(":8085");
+    const socket = io(":8085", {transports: ['websocket']});
     socket.on("data", (data: Map<string, Map<string, Map<string, any>>>) => {
         // @ts-ignore
         onUpdate(data.data)

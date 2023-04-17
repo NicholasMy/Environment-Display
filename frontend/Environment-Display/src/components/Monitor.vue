@@ -7,7 +7,7 @@
 
     <template v-if="store.getDataForRoom(name) == null">
       <v-card-item>
-        <h1>Waiting for sensor data...</h1>
+        <h3>Waiting for sensor data...</h3>
       </v-card-item>
     </template>
     <template v-else-if="!store.getDataForRoom(name).success">
