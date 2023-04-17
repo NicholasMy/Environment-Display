@@ -6,7 +6,7 @@ from time import sleep
 import socketio
 
 import login_secrets as secrets
-from typing import List
+from typing import List, Optional, Awaitable
 from threading import Lock, Thread
 
 import tornado.web
@@ -18,7 +18,7 @@ from backend.OlderNTIEnvironmentMonitor import OlderNTIEnvironmentMonitor
 CACHE = {}
 CACHE_UPDATED = False
 CACHE_LOCK = Lock()
-sio = socketio.AsyncServer(async_mode='tornado', cors_allowed_origins="*")
+sio = socketio.AsyncServer(async_mode='tornado', cors_allowed_origins="*")  # Not secure, but Nginx will change this
 
 __failure_dictionary = {
     "success": False
@@ -37,12 +37,21 @@ monitors: List[EnvironmentalMonitor] = [
 ]
 
 
-class MainHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        pass
+
+    def set_default_headers(self):
+        # Allow * origins to all API endpoints in development
+        self.set_header("Access-Control-Allow-Origin", "*")  # Not secure, but Nginx will change this
+
+
+class MainHandler(BaseHandler):
     def get(self):
         self.write("Whoops, you probably meant to load the frontend or make a specific API call.")
 
 
-class RoomsHandler(tornado.web.RequestHandler):
+class RoomsHandler(BaseHandler):
     def get(self):
         rooms_list = []
         for monitor in monitors:
@@ -57,7 +66,7 @@ class RoomsHandler(tornado.web.RequestHandler):
         self.write(json.dumps(d))
 
 
-class DataHandler(tornado.web.RequestHandler):
+class DataHandler(BaseHandler):
     def get(self):
         self.write(json.dumps(get_data()))
 
