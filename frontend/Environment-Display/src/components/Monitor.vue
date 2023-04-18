@@ -2,7 +2,16 @@
 
   <v-card class="ma-2 pa-2 rounded-lg" style="width: 400px;">
     <v-card-title>
-      <h2>{{ store.friendlyNamesMap[name] || "Unknown friendly room name" }}</h2>
+      <div class="d-flex">
+        <div class="mr-auto">
+          <h2>{{ store.friendlyNamesMap[name] || "Unknown friendly room name" }}</h2>
+        </div>
+        <div>
+          <div v-if="store.getDataForRoom(name) !== null && store.getDataForRoom(name).updating">
+            <v-progress-circular :size="28" :width="6" color="white" indeterminate />
+          </div>
+        </div>
+      </div>
     </v-card-title>
 
     <template v-if="store.getDataForRoom(name) == null">
@@ -47,6 +56,7 @@
       <v-card-item>
         <slot></slot>
       </v-card-item>
+
     </template>
   </v-card>
 

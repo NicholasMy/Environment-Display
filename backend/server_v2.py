@@ -100,13 +100,16 @@ def background_updater():
     while True:
         for monitor in monitors:
             try:
+                with CACHE_LOCK:
+                    CACHE[monitor.name]["updating"] = True
+                    CACHE_UPDATED = True
                 data = monitor.fetch_data()
                 with CACHE_LOCK:
-                    CACHE[monitor.name] = data
+                    CACHE[monitor.name] = data  # This removes the "updating" key
                     CACHE[monitor.name]["success"] = True
                     CACHE_UPDATED = True
             except Exception as e:
-                print(e)
+                print(str(e))
                 with CACHE_LOCK:
                     CACHE[monitor.name] = __failure_dictionary
                     CACHE_UPDATED = True
