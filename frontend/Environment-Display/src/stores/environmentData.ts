@@ -17,11 +17,21 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
 
     socket.on("connect", () => {
         websocketConnected.value = true;
+        updateRooms()
     })
 
     socket.on("disconnect", () => {
         websocketConnected.value = false;
     })
+
+    function updateRooms() {
+        // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
+        fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/rooms`)
+            .then(res => res.json())
+            .then(json => {
+                Object.assign(rooms, json.rooms)
+            })
+    }
 
     function onUpdate(data: Map<string, Map<string, any>>) {
         // @ts-ignore
@@ -46,5 +56,5 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     })
 
 
-    return {environmentData, rooms, onUpdate, getDataForRoom, friendlyNamesMap, websocketConnected}
+    return {environmentData, rooms, updateRooms, onUpdate, getDataForRoom, friendlyNamesMap, websocketConnected}
 })
