@@ -12,6 +12,7 @@ from threading import Lock, Thread
 import tornado.web
 
 from backend.EnvironmentalMonitor import EnvironmentalMonitor
+from backend.MockEnvironmentMonitor import MockEnvironmentMonitor
 from backend.NTIEnvironmentMonitor import NTIEnvironmentMonitor
 from backend.OlderNTIEnvironmentMonitor import OlderNTIEnvironmentMonitor
 
@@ -20,13 +21,17 @@ CACHE_UPDATED = False
 CACHE_LOCK = Lock()
 sio = socketio.AsyncServer(async_mode='tornado', cors_allowed_origins="*")  # Not secure, but Nginx will change this
 
-__failure_dictionary = {
-    "success": False
-}
+
+def __get_failure_dictionary():
+    return {
+        "success": False
+    }
+
 
 monitors: List[EnvironmentalMonitor] = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+    # MockEnvironmentMonitor("mockdavis339a", "Mock Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/", 3.0),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
                           secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
     NTIEnvironmentMonitor("davis339e", "Davis 339E North", "https://temp-davis-339e.cse.buffalo.edu/",
@@ -111,7 +116,7 @@ def background_updater():
             except Exception as e:
                 print(str(e))
                 with CACHE_LOCK:
-                    CACHE[monitor.name] = __failure_dictionary
+                    CACHE[monitor.name] = __get_failure_dictionary()
                     CACHE_UPDATED = True
 
         sleep(1)
@@ -135,7 +140,7 @@ async def initialize():
     global CACHE_LOCK
     with CACHE_LOCK:
         for monitor in monitors:
-            CACHE[monitor.name] = __failure_dictionary
+            CACHE[monitor.name] = __get_failure_dictionary()
 
 
 async def main():

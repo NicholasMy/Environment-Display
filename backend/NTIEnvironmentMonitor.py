@@ -33,7 +33,9 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         else:
             raise Exception(f"Login failed to: {self.url}")
 
-    def fetch_data(self):
+    def fetch_data(self, retry=False):
+        # retry will prevent infinite recursion. Set to true if this is the second attempt at fetching data.
+
         # print("Fetching data " + self.url)
         d = {
             "name": self.name,
@@ -50,9 +52,12 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
             temperature_data = requests.get(temperature_url, cookies={"session": self.session_cookie}, timeout=10).json()
             humidity_data = requests.get(humidity_url, cookies={"session": self.session_cookie}, timeout=10).json()
         except Exception as e:
+            if retry:
+                raise e  # Don't try again if this is the second attempt, just bubble up the exception
+
             # If that failed, we probably need a new session
             self.create_session()
-            return self.fetch_data()
+            return self.fetch_data(retry=True)
 
         d["temperature"] = temperature_data
         d["humidity"] = humidity_data

@@ -87,8 +87,7 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
             d["temperature"] = parsed_temperature
             d["humidity"] = parsed_humidity
         except Exception as e:
-            # Ignore errors
-            print(e)
+            raise e  # Bubble up the exception
 
         d["url"] = self.url
 
