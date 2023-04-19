@@ -1,6 +1,7 @@
 import asyncio
 import json
 from datetime import datetime
+from random import random
 from time import sleep
 
 import socketio
@@ -40,6 +41,10 @@ monitors: List[EnvironmentalMonitor] = [
     OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Hot Aisle", "http://enviromux-davis-339c.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E South", "http://enviromux-davis-339e.cse.buffalo.edu/"),
 ]
+
+
+# for i in range(5):
+#     monitors.append(MockEnvironmentMonitor(f"mock{i}", f"Mock {i}", "https://temp-davis-339a.cse.buffalo.edu/", random() * 1))
 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -150,7 +155,7 @@ async def main():
     background_updater_thread = Thread(target=background_updater)
     background_updater_thread.start()
 
-    ioloop.PeriodicCallback(background_sender, 1000).start()
+    ioloop.PeriodicCallback(background_sender, 500).start()
 
     app = tornado.web.Application([
         (r"/", MainHandler),

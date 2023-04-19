@@ -5,7 +5,7 @@ import {io} from "socket.io-client";
 
 export const useEnvironmentDataStore = defineStore('environmentData', () => {
     const environmentData = reactive(<Map<string, Map<string, any>>>{}); // Room name -> Dict
-    const rooms = reactive<Array<Map<string, string>>>({});
+    const rooms = reactive<Array<Map<string, string>>>([]);
     const friendlyNamesMap = reactive({});
     const websocketConnected = ref(false);
 
@@ -52,7 +52,6 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
             const friendly_name = newVal[i].friendly_name
             friendlyNamesMap[name] = friendly_name
         }
-
     })
 
 

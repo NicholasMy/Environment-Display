@@ -6,10 +6,6 @@ import {useEnvironmentDataStore} from "@/stores/environmentData"
 
 const environmentDataStore = useEnvironmentDataStore()
 
-
-
-environmentDataStore.updateRooms()
-
 function formatDate(dateString: string | undefined) {
   if (dateString === undefined) return "..."
   const date = new Date(Date.parse(dateString))
