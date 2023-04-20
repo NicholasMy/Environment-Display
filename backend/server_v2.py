@@ -81,6 +81,11 @@ class DataHandler(BaseHandler):
         self.write(json.dumps(get_data()))
 
 
+class HistoryHandler(BaseHandler):
+    def get(self, monitor, days):
+        self.write(Record.get_json_for_monitor(monitor, int(days)))
+
+
 @sio.on('connect')
 async def connect(sid, environ, auth):
     # Send the initial state when connecting
@@ -163,6 +168,7 @@ async def main():
         (r"/", MainHandler),
         (r"/data", DataHandler),
         (r"/rooms", RoomsHandler),
+        (r"/history/([a-zA-Z0-9_]+)/([0-9]+)", HistoryHandler),
         (r"/socket.io/", socketio.get_tornado_handler(sio)),
     ])
 
