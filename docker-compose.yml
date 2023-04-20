@@ -28,3 +28,17 @@ services:
       dockerfile: Dockerfile-build
     volumes:
       - ./frontend/Environment-Display/dist:/app/Environment-Display/dist
+  db:
+    image: mysql:8.0.32
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "changeme"
+      MYSQL_DATABASE: "environment_display"
+      MYSQL_USER: "environment_display"
+      MYSQL_PASSWORD: "changeme"
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"  # Uncomment this for local debugging, but don't bind to host in production
+    volumes:
+      - ./data/db:/var/lib/mysql

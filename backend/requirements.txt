@@ -5,3 +5,7 @@ eventlet
 requests
 tornado
 python-socketio
+sqlalchemy
+mysqlclient
+pymysql
+cryptography

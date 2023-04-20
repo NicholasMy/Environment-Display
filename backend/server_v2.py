@@ -3,19 +3,19 @@ import json
 from datetime import datetime
 from random import random
 from time import sleep
-
 import socketio
 from tornado import ioloop
 import login_secrets as secrets
 from typing import List, Optional, Awaitable
 from threading import Lock, Thread
-
 import tornado.web
 
+from backend import database
 from backend.EnvironmentalMonitor import EnvironmentalMonitor
 from backend.MockEnvironmentMonitor import MockEnvironmentMonitor
 from backend.NTIEnvironmentMonitor import NTIEnvironmentMonitor
 from backend.OlderNTIEnvironmentMonitor import OlderNTIEnvironmentMonitor
+from backend.database import Record
 
 CACHE = {}
 CACHE_UPDATED = False
@@ -118,6 +118,7 @@ def background_updater():
                     CACHE[monitor.name] = data  # This removes the "updating" key
                     CACHE[monitor.name]["success"] = True
                     CACHE_UPDATED = True
+                Record.create(monitor.name, data["temperature"]["current"], data["humidity"]["current"])
             except Exception as e:
                 print(str(e))
                 with CACHE_LOCK:
@@ -153,6 +154,7 @@ async def main():
     global sio
 
     background_updater_thread = Thread(target=background_updater)
+    background_updater_thread.daemon = True  # This thread will die when the main thread dies
     background_updater_thread.start()
 
     ioloop.PeriodicCallback(background_sender, 500).start()
@@ -170,4 +172,5 @@ async def main():
 
 
 if __name__ == '__main__':
+    database.initialize_database()
     asyncio.run(main())
