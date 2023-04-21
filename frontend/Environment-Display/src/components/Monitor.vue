@@ -8,7 +8,7 @@
         </div>
         <div>
           <div v-if="store.getDataForRoom(name) !== null && store.getDataForRoom(name).updating">
-            <v-progress-circular :size="28" :width="6" color="white" indeterminate />
+            <v-progress-circular :size="28" :width="6" color="white" indeterminate/>
           </div>
         </div>
       </div>
@@ -21,8 +21,19 @@
     </template>
     <template v-else-if="!store.getDataForRoom(name).success">
       <v-card-item>
-        <h2 class="text-red">Error connecting to sensor.</h2>
-        <p>Check the console output for more information.</p>
+        <div v-if="store.getDataForRoom(name).rebooting">
+          <div class="d-flex align-center">
+          <h2 class="text-green-accent-4 mr-auto">Sensor is rebooting.</h2>
+            <v-progress-circular :size="28" :width="6" color="green-accent-4" indeterminate/>
+          </div>
+          <p>This is still a fragile feature in development. The green spinner means the server believes the monitor is
+            still rebooting. The white spinner means the server is checking the status of the monitor.</p>
+        </div>
+        <div v-else>
+          <h2 class="text-red">Error connecting to sensor.</h2>
+          <p>Check the console output for more information.</p>
+        </div>
+
       </v-card-item>
     </template>
 

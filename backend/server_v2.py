@@ -1,7 +1,6 @@
 import asyncio
 import json
 from datetime import datetime
-from random import random
 from time import sleep
 import socketio
 from tornado import ioloop
@@ -31,12 +30,12 @@ def __get_failure_dictionary():
 
 monitors: List[EnvironmentalMonitor] = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.05),
     # MockEnvironmentMonitor("mockdavis339a", "Mock Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/", 3.0),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.03),
     NTIEnvironmentMonitor("davis339e", "Davis 339E North", "https://temp-davis-339e.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.02),
     OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Hot Aisle", "http://enviromux-davis-339a.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Hot Aisle", "http://enviromux-davis-339c.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E South", "http://enviromux-davis-339e.cse.buffalo.edu/"),
@@ -109,6 +108,7 @@ def get_data():
 
 
 def background_updater():
+    print("Starting background updater")
     global CACHE
     global CACHE_LOCK
     global CACHE_UPDATED
@@ -122,14 +122,22 @@ def background_updater():
                 with CACHE_LOCK:
                     CACHE[monitor.name] = data  # This removes the "updating" key
                     CACHE[monitor.name]["success"] = True
+                    CACHE[monitor.name]["rebooting"] = False
                     CACHE_UPDATED = True
                 Record.create(monitor.name, data["temperature"]["current"], data["humidity"]["current"])
             except Exception as e:
                 print(str(e))
                 with CACHE_LOCK:
                     CACHE[monitor.name] = __get_failure_dictionary()
+                    if monitor.is_rebooting():
+                        CACHE[monitor.name]["rebooting"] = True
                     CACHE_UPDATED = True
-
+            reboot = monitor.reboot_if_needed()
+            if reboot:
+                with CACHE_LOCK:
+                    CACHE[monitor.name] = __get_failure_dictionary()
+                    CACHE[monitor.name]["rebooting"] = True
+                    CACHE_UPDATED = True
         sleep(1)
 
 
@@ -141,7 +149,6 @@ async def background_sender():
         CACHE_UPDATED = False
         CACHE_LOCK.release()
         await sio.emit("data", get_data())
-        CACHE_UPDATED = False
     else:
         CACHE_LOCK.release()
 
@@ -173,6 +180,7 @@ async def main():
     ])
 
     app.listen(8085)
+    print("Web server started on port 8085")
 
     await asyncio.Event().wait()
 

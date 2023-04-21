@@ -80,7 +80,7 @@ class OlderNTIEnvironmentMonitor(EnvironmentalMonitor):
         data_url = self.url + "Updater.html"
 
         try:
-            data = requests.get(data_url, timeout=10)
+            data = requests.get(data_url, timeout=5)
             assert data.status_code == 200
             text = data.text
             parsed_temperature, parsed_humidity = self.parse_ugly_data(text)
