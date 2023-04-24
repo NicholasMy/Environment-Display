@@ -21,11 +21,14 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         self.reboot_hours = reboot_hours
         self.session_cookie = None
         self.last_reboot = datetime.now()
-
         self.rebooting = False
 
+    def get_seconds_since_last_reboot(self):
+        return (datetime.now() - self.last_reboot).seconds
+
     def is_rebooting(self):
-        return self.rebooting
+        return self.rebooting and self.get_seconds_since_last_reboot() < 120
+        # If it's still offline 2 minutes after the reboot, it's probably not actually rebooting
 
     def reboot(self):
         if self.is_rebooting():
@@ -40,6 +43,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         try:
             self.create_session()
             res = requests.post(url, data=data, cookies={"session": self.session_cookie}, timeout=5)
+            # print(res.text)
         except ReadTimeout:
             self.rebooting = False
             print("Reboot request timed out for " + self.url)
@@ -51,13 +55,15 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
             print("Reboot failed for " + self.url)
         self.last_reboot = datetime.now()
 
-    def reboot_if_needed(self) -> bool:
-        # If the last reboot was more than a day ago, reboot
-        # Returns true if a reboot was performed
-        if (datetime.now() - self.last_reboot).seconds / 60 / 60 > self.reboot_hours:
+    def reboot_necessary(self) -> bool:
+        return (datetime.now() - self.last_reboot).seconds / 60 / 60 > self.reboot_hours
+
+    def reboot_if_needed(self):
+        if self.reboot_necessary():
             self.reboot()
-            return True
-        return False
+
+    def get_seconds_to_next_reboot(self):
+        return self.reboot_hours * 60 * 60 - (datetime.now() - self.last_reboot).seconds
 
     def create_session(self):
         # print("Creating session " + self.url)
@@ -109,6 +115,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         d["temperature"] = temperature_data
         d["humidity"] = humidity_data
         d["url"] = self.url
+        d["next_reboot_seconds"] = self.get_seconds_to_next_reboot()
 
         # Convert strings to ints/floats if possible
         for measurement in ["temperature", "humidity"]:

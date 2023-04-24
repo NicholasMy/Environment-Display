@@ -30,12 +30,12 @@ def __get_failure_dictionary():
 
 monitors: List[EnvironmentalMonitor] = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.05),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 23.0),
     # MockEnvironmentMonitor("mockdavis339a", "Mock Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/", 3.0),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.03),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 22.0),
     NTIEnvironmentMonitor("davis339e", "Davis 339E North", "https://temp-davis-339e.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.02),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 0.5),
     OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Hot Aisle", "http://enviromux-davis-339a.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Hot Aisle", "http://enviromux-davis-339c.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E South", "http://enviromux-davis-339e.cse.buffalo.edu/"),
@@ -122,22 +122,23 @@ def background_updater():
                 with CACHE_LOCK:
                     CACHE[monitor.name] = data  # This removes the "updating" key
                     CACHE[monitor.name]["success"] = True
-                    CACHE[monitor.name]["rebooting"] = False
+                    CACHE[monitor.name].pop("rebooting", None)
                     CACHE_UPDATED = True
                 Record.create(monitor.name, data["temperature"]["current"], data["humidity"]["current"])
             except Exception as e:
-                print(str(e))
+                print("Error getting data for sensor ", monitor.url, str(e))
                 with CACHE_LOCK:
                     CACHE[monitor.name] = __get_failure_dictionary()
                     if monitor.is_rebooting():
                         CACHE[monitor.name]["rebooting"] = True
                     CACHE_UPDATED = True
-            reboot = monitor.reboot_if_needed()
+            reboot = monitor.reboot_necessary()
             if reboot:
                 with CACHE_LOCK:
                     CACHE[monitor.name] = __get_failure_dictionary()
                     CACHE[monitor.name]["rebooting"] = True
                     CACHE_UPDATED = True
+                monitor.reboot_if_needed()
         sleep(1)
 
 
