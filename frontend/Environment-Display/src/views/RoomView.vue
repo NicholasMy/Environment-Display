@@ -1,9 +1,10 @@
 <template>
 
-  <div class="d-flex justify-center">
+  <div class="d-flex align-center align-md-baseline justify-center flex-column flex-md-row">
     <Monitor :name="$route.params.room">
-      <MonitorExtendedAttributes :room="$route.params.room" />
+      <MonitorExtendedAttributes :room="$route.params.room"/>
     </Monitor>
+    <HistoryChart/>
   </div>
 
   <v-expansion-panels class="pa-4">
@@ -20,6 +21,7 @@
 <script setup>
 import {useEnvironmentDataStore} from "@/stores/environmentData";
 import MonitorExtendedAttributes from "@/components/MonitorExtendedAttributes.vue";
+import HistoryChart from "@/views/HistoryChart.vue";
 
 const store = useEnvironmentDataStore()
 </script>
@@ -33,6 +35,3 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
