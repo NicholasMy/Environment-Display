@@ -1,7 +1,6 @@
 <template>
 
-<!--  <div class="d-flex align-center align-md-baseline justify-center flex-column flex-md-row">-->
-  <div class="d-flex flex-column flex-lg-row justify-center align-center align-lg-start w-100">
+  <div class="mb-8 d-flex flex-column flex-lg-row justify-center align-center align-lg-start w-100">
     <Monitor :name="$route.params.room" class="flex-shrink-0">
       <MonitorExtendedAttributes :room="$route.params.room"/>
     </Monitor>
