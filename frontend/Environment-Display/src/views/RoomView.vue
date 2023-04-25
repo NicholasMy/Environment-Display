@@ -1,10 +1,11 @@
 <template>
 
-  <div class="d-flex align-center align-md-baseline justify-center flex-column flex-md-row">
-    <Monitor :name="$route.params.room">
+<!--  <div class="d-flex align-center align-md-baseline justify-center flex-column flex-md-row">-->
+  <div class="d-flex flex-column flex-lg-row justify-center align-center align-lg-start w-100">
+    <Monitor :name="$route.params.room" class="flex-shrink-0">
       <MonitorExtendedAttributes :room="$route.params.room"/>
     </Monitor>
-    <HistoryChart/>
+    <HistoryChart  class="flex-shrink-1" />
   </div>
 
   <v-expansion-panels class="pa-4">
