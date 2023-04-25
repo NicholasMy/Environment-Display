@@ -34,9 +34,30 @@ ChartJS.register(
 );
 
 const loadingData = ref(false)
-const fetchedData = reactive({})
+const fetchedData = reactive([])
 // const fakeData = [{timestamp: '2016-12-25', temperature: 20}, {timestamp: '2016-12-26', temperature: 10}, {timestamp: '2016-12-27', temperature: 15}]
-const fakeData = [{x: 1, y: 20}, {x: 2, y: 0.5}, {x: 3, y: 4}, {x: 4, y: 10}]
+// const fakeData = [{x: 1, y: 20}, {x: 2, y: 0.5}, {x: 3, y: 4}, {x: 4, y: 10}]
+const fakeData = [{"temperature": 70.8, "humidity": 36.9, "timestamp": "2023-04-24T10:09:52"}, {
+  "temperature": 70.8,
+  "humidity": 36.8,
+  "timestamp": "2023-04-24T10:10:05"
+}, {"temperature": 70.8, "humidity": 36.8, "timestamp": "2023-04-24T10:10:16"}, {
+  "temperature": 70.8,
+  "humidity": 36.8,
+  "timestamp": "2023-04-24T10:10:26"
+}, {"temperature": 70.9, "humidity": 36.7, "timestamp": "2023-04-24T10:10:59"}, {
+  "temperature": 70.9,
+  "humidity": 36.7,
+  "timestamp": "2023-04-24T10:11:10"
+}, {"temperature": 70.9, "humidity": 36.6, "timestamp": "2023-04-24T10:11:20"}, {
+  "temperature": 70.9,
+  "humidity": 36.6,
+  "timestamp": "2023-04-24T10:11:31"
+}, {"temperature": 70.9, "humidity": 36.6, "timestamp": "2023-04-24T10:11:41"}, {
+  "temperature": 71.0,
+  "humidity": 36.6,
+  "timestamp": "2023-04-24T10:11:51"
+}]
 
 // function buildChart() {
 //   let newChartData = {
@@ -55,19 +76,51 @@ const fakeData = [{x: 1, y: 20}, {x: 2, y: 0.5}, {x: 3, y: 4}, {x: 4, y: 10}]
 //   Object.assign(historyChart, newChartData)
 // }
 
-const historyChart = reactive({
+// const historyChart = reactive({
+//   labels: fetchedData.map((dataPoint: any) => dataPoint.timestamp),
+//   datasets: [
+//     {
+//       label: 'Temperature',
+//       backgroundColor: '#21c965',
+//       color: '#ffffff',
+//       // xAxisKey: '',
+//       // yAxisKey: 'temperature',
+//       // xAxisType: 'time',
+//       data: fetchedData.map((dataPoint: any) => dataPoint.temperature)
+//     }
+//   ]
+// })
+
+const historyChart = computed(() => {
+  return {
+    labels: fetchedData.map((dataPoint: any) => dataPoint.timestamp),
+    datasets:
+        [
+          {
+            label: 'Temperature',
+            backgroundColor: '#21c965',
+            color: '#ffffff',
+            // xAxisKey: '',
+            // yAxisKey: 'temperature',
+            // xAxisType: 'time',
+            data: fetchedData.map((dataPoint: any) => dataPoint.temperature)
+          }
+        ]
+  }
+
+})
+
+const exampleChart = {
+  // labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+  labels: fakeData.map((dataPoint: any) => dataPoint.timestamp),
   datasets: [
     {
-      label: 'Temperature',
-      backgroundColor: '#21c965',
-      color: '#ffffff',
-      // xAxisKey: '',
-      // yAxisKey: 'temperature',
-      // xAxisType: 'time',
-      data: fetchedData
+      label: 'Data One',
+      backgroundColor: '#f87979',
+      data: fakeData.map((dataPoint: any) => dataPoint.temperature)
     }
   ]
-})
+}
 
 const chartOptions = {
   responsive: false,
@@ -75,16 +128,14 @@ const chartOptions = {
   scales: {
     y: {
       beginAtZero: false,
-      min: 0,
-      max: 100
     }
   },
-  options: {
-    parsing: {
-      xAxisKey: "x",
-      yAxisKey: "y"
-    }
-  }
+  // options: {
+  //   parsing: {
+  //     xAxisKey: "timestamp",
+  //     yAxisKey: "temperature"
+  //   }
+  // }
 }
 
 
@@ -92,7 +143,7 @@ function getHistoricData(room: string, days: number) {
   loadingData.value = true
   fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${days}`)
       .then(res => res.json())
-      .then(res => Object.assign(fetchedData, fakeData))
+      .then(res => Object.assign(fetchedData, res))
       // .then(() => buildChart())
       .then(() => loadingData.value = false)
       .then(() => console.log(fetchedData))
@@ -101,7 +152,8 @@ function getHistoricData(room: string, days: number) {
 
 const route = useRoute()
 watch(() => route.params.room, () => {
-      getHistoricData("davis339c", 1)
+      // Reload chart data when the route (room) changes
+      getHistoricData(route.params.room.toString(), 1)
     },
     {immediate: true})
 
