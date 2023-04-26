@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import {Line} from 'vue-chartjs'
-import {computed, getCurrentInstance, reactive, ref, watch} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 // https://vue-chartjs.org/examples/
 import {
   Chart as ChartJS,
@@ -34,7 +34,6 @@ import {
 import {useRoute} from "vue-router";
 import 'chartjs-adapter-moment'
 import {useEnvironmentDataStore} from "@/stores/environmentData";
-import {da} from "vuetify/locale";
 
 ChartJS.register(
     CategoryScale,
@@ -73,41 +72,37 @@ const historyChart = computed(() => {
 })
 
 
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: {
-      beginAtZero: false,
-    },
-    x: {
-      type: 'time',
-      time: {
-        unit: 'hour'
+const chartOptions = computed(() => {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: false,
+      },
+      x: {
+        type: 'time',
+        time: {
+          unit: days.value > 2 ? 'day' : 'hour',
+        }
       }
+    },
+    animation: {
+      duration: 0
     }
-  },
-  animation: {
-    duration: 0
   }
-}
+})
 
 function getHistoricData(room: string, days: number) {
   loadingData.value = true
   fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${days}`)
-      .then(res => res.json()
-        // Object.assign(fetchedData, [{"temperature": 63.9, "humidity": 52.0, "timestamp": "2023-04-24T10:09:55"}, {"temperature": 63.9, "humidity": 52.0, "timestamp": "2023-04-24T10:10:07"}])
-        // Object.assign(fetchedData, js)
-        // loadingData.value = false
-      )
+      .then(res => res.json())
       .then(data => {
         Object.assign(fetchedData, data)
+        fetchedData.length = data.length
       })
-      .then
-      (() => {
-        loadingData.value = false
-      })
-      // TODO: Fix the old data not being removed bug
+      .then(() => loadingData.value = false)
+  // TODO: Fix the old data not being removed bug
 
 }
 
