@@ -26,8 +26,7 @@
           <h2 class="text-green-accent-4 mr-auto">Sensor is rebooting.</h2>
             <v-progress-circular :size="28" :width="6" color="green-accent-4" indeterminate/>
           </div>
-          <p>This is still a fragile feature in development. The green spinner means the server believes the monitor is
-            still rebooting. The white spinner means the server is checking the status of the monitor.</p>
+          <p>This should take less than a minute.</p>
         </div>
         <div v-else>
           <h2 class="text-red">Error connecting to sensor.</h2>
