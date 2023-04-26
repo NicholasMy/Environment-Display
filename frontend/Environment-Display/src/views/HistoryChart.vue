@@ -3,8 +3,10 @@
     <!--    <h1>Charts!</h1>-->
     <div class="d-flex flex-row align-center">
       <h3 class="py-2">History Chart of Past</h3>
-      <v-text-field class="mx-2" style="max-width: 50px" variant="underlined" type="number" v-model="days"
-                    @change="reloadChart"></v-text-field>
+      <!--      <v-text-field class="mx-2" style="max-width: 50px" variant="underlined" type="number" v-model="days"-->
+      <!--                    @change="reloadChart"></v-text-field>-->
+<!--      The Vuetify number input raises an exception when changing the number, so we'll use the uglier default one -->
+      <input class="mx-2" style="max-width: 50px" type="number" v-model="days" @change="reloadChart"/>
       <h3 class="py-2">{{ days != 1 ? "Days" : "Day" }} for
         {{ store.getDataForRoom(roomName)?.friendly_name || `"${roomName}"` }}</h3>
     </div>
@@ -104,8 +106,6 @@ function getHistoricData(room: string, days: number) {
         fetchedData.length = data.length
       })
       .then(() => loadingData.value = false)
-  // TODO: Fix the old data not being removed bug
-
 }
 
 function reloadChart() {
