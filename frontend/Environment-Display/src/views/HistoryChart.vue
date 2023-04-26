@@ -9,11 +9,12 @@
         {{ store.getDataForRoom(roomName)?.friendly_name || `"${roomName}"` }}</h3>
     </div>
 
-    <div v-if="loadingData" class="charts-div d-flex justify-center align-center">
+    <div v-if="loadingData" class="d-flex justify-center align-center">
       <v-progress-circular class="ma-4" indeterminate size="64"/>
       <h2>Loading</h2>
     </div>
     <Line v-else :data="historyChart" :options="chartOptions"/>
+    <v-checkbox v-model="autoScale" label="Auto Scale" class="mt-2"/>
   </div>
 </template>
 
@@ -50,6 +51,7 @@ const loadingData = ref(false)
 const fetchedData = reactive([])
 const roomName = ref('')
 const days = ref(1)
+const autoScale = ref(true)
 const store = useEnvironmentDataStore()
 
 const historyChart = computed(() => {
@@ -75,10 +77,10 @@ const historyChart = computed(() => {
 const chartOptions = computed(() => {
   return {
     responsive: true,
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     scales: {
       y: {
-        beginAtZero: false,
+        beginAtZero: !autoScale.value
       },
       x: {
         type: 'time',
@@ -133,7 +135,7 @@ export default {
 <style scoped>
 
 .charts-div {
-  height: 400px;
+  height: 500px;
   max-width: 800px;
   width: 100%;
 }
