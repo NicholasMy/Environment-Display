@@ -139,7 +139,8 @@ def background_updater():
                     CACHE[monitor.name]["rebooting"] = True
                     CACHE_UPDATED = True
                 monitor.reboot_if_needed()
-        sleep(1)
+            sleep(5)  # Between sensors
+        sleep(1)  # Between cycles
 
 
 async def background_sender():
