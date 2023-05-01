@@ -142,16 +142,17 @@ const chartOptions = computed(() => {
   }
 })
 
-function getHistoricData(room: string, days: number) {
+function getHistoricData(room: string, hours: number) {
   data.loadingData = true
-  fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${days}`)
+  fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${hours}`)
       .then(res => res.json())
       .then(newData => data.fetchedData = newData)
       .then(() => data.loadingData = false)
 }
 
 function reloadChart() {
-  getHistoricData(data.roomName, data.timeCount)
+  const hours = data.timeUnit === "day" ? data.timeCount * 24 : data.timeCount
+  getHistoricData(data.roomName, hours)
 }
 
 
