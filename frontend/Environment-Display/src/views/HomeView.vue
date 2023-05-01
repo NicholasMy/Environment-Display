@@ -6,7 +6,7 @@
 
 
   <div class="d-flex flex-wrap justify-center">
-    <monitor v-for="room in store.rooms" :key="room.name" :name="room.name"/>
+    <monitor v-for="room in store.state.rooms" :key="room.name" :name="room.name"/>
 
   </div>
 

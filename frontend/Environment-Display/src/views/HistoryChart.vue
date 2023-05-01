@@ -5,18 +5,18 @@
       <h3 class="py-2">History Chart of Past</h3>
       <!--      <v-text-field class="mx-2" style="max-width: 50px" variant="underlined" type="number" v-model="days"-->
       <!--                    @change="reloadChart"></v-text-field>-->
-<!--      The Vuetify number input raises an exception when changing the number, so we'll use the uglier default one -->
-      <input class="mx-2" style="max-width: 50px" type="number" v-model="days" @change="reloadChart"/>
-      <h3 class="py-2">{{ days != 1 ? "Days" : "Day" }} for
-        {{ store.getDataForRoom(roomName)?.friendly_name || `"${roomName}"` }}</h3>
+      <!--      The Vuetify number input raises an exception when changing the number, so we'll use the uglier default one -->
+      <input class="mx-2" style="max-width: 50px" type="number" v-model="data.days" @change="reloadChart"/>
+      <h3 class="py-2">{{ data.days !== 1 ? "Days" : "Day" }} for
+        {{ store.getDataForRoom(data.roomName)?.friendly_name || `"${data.roomName}"` }}</h3>
     </div>
 
-    <div v-if="loadingData" class="d-flex justify-center align-center">
+    <div v-if="data.loadingData" class="d-flex justify-center align-center">
       <v-progress-circular class="ma-4" indeterminate size="64"/>
       <h2>Loading</h2>
     </div>
     <Line v-else :data="historyChart" :options="chartOptions"/>
-    <v-checkbox v-model="autoScale" label="Auto Scale" class="mt-2"/>
+    <v-checkbox v-model="data.autoScale" label="Auto Scale" class="mt-2"/>
   </div>
 </template>
 
@@ -49,27 +49,30 @@ ChartJS.register(
     Legend
 );
 
-const loadingData = ref(false)
-const fetchedData = reactive([])
-const roomName = ref('')
-const days = ref(1)
-const autoScale = ref(true)
+const data = reactive({
+  loadingData: false,
+  fetchedData: [],
+  roomName: '',
+  days: 1,
+  autoScale: true
+})
+
 const store = useEnvironmentDataStore()
 
 const historyChart = computed(() => {
   return {
-    labels: fetchedData.map((dataPoint: any) => dataPoint.timestamp),
+    labels: data.fetchedData.map((dataPoint: any) => dataPoint.timestamp),
     datasets:
         [
           {
             label: 'Temperature (°F)',
             backgroundColor: '#21c965',
-            data: fetchedData.map((dataPoint: any) => dataPoint.temperature)
+            data: data.fetchedData.map((dataPoint: any) => dataPoint.temperature)
           },
           {
             label: 'Relative Humidity (%)',
             backgroundColor: '#2f8bb0',
-            data: fetchedData.map((dataPoint: any) => dataPoint.humidity)
+            data: data.fetchedData.map((dataPoint: any) => dataPoint.humidity)
           }
         ]
   }
@@ -82,12 +85,12 @@ const chartOptions = computed(() => {
     maintainAspectRatio: true,
     scales: {
       y: {
-        beginAtZero: !autoScale.value
+        beginAtZero: !data.autoScale
       },
       x: {
         type: 'time',
         time: {
-          unit: days.value > 2 ? 'day' : 'hour',
+          unit: data.days > 2 ? 'day' : 'hour',
         }
       }
     },
@@ -98,18 +101,15 @@ const chartOptions = computed(() => {
 })
 
 function getHistoricData(room: string, days: number) {
-  loadingData.value = true
+  data.loadingData = true
   fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${days}`)
       .then(res => res.json())
-      .then(data => {
-        Object.assign(fetchedData, data)
-        fetchedData.length = data.length
-      })
-      .then(() => loadingData.value = false)
+      .then(newData => data.fetchedData = newData)
+      .then(() => data.loadingData = false)
 }
 
 function reloadChart() {
-  getHistoricData(roomName.value, days.value)
+  getHistoricData(data.roomName, data.days)
 }
 
 
@@ -117,7 +117,7 @@ const route = useRoute()
 watch(() => route.params.room, () => {
       if (route.params.room != undefined) {
         // Reload chart data when the route (room) changes
-        roomName.value = route.params.room.toString()
+        data.roomName = route.params.room.toString()
         reloadChart()
       }
     },

@@ -8,11 +8,11 @@
     </h3>
     <v-row class="pa-4">
       <v-sheet class="bg-yellow rounded-pill py-1 px-3 mx-2">
-        {{ store.environmentData[room].temperature.maxWThresh }}
-        <span v-html="store.environmentData[room].temperature.units"></span>
+        {{ store.state.environmentData[room].temperature.maxWThresh }}
+        <span v-html="store.state.environmentData[room].temperature.units"></span>
       </v-sheet>
       <v-sheet class="bg-yellow rounded-pill py-1 px-3 mx-2">
-        {{ store.environmentData[room].humidity.maxWThresh }}% RH
+        {{ store.state.environmentData[room].humidity.maxWThresh }}% RH
       </v-sheet>
     </v-row>
   </v-container>
@@ -24,17 +24,17 @@
     </h3>
     <v-row class="pa-4">
       <v-sheet class="bg-red rounded-pill py-1 px-3 mx-2">
-        {{ store.environmentData[room].temperature.maxThresh }}
-        <span v-html="store.environmentData[room].temperature.units"></span>
+        {{ store.state.environmentData[room].temperature.maxThresh }}
+        <span v-html="store.state.environmentData[room].temperature.units"></span>
       </v-sheet>
       <v-sheet class="bg-red rounded-pill py-1 px-3 mx-2">
-        {{ store.environmentData[room].humidity.maxThresh }}% RH
+        {{ store.state.environmentData[room].humidity.maxThresh }}% RH
       </v-sheet>
     </v-row>
   </v-container>
 
 
-  <v-btn class="mt-4 bg-blue-darken-4" :href="store.environmentData[room].url" target="_blank">Edit settings</v-btn>
+  <v-btn class="mt-4 bg-blue-darken-4" :href="store.state.environmentData[room].url" target="_blank">Edit settings</v-btn>
 </template>
 
 <script setup lang="ts">

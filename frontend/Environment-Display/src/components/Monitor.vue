@@ -4,7 +4,7 @@
     <v-card-title>
       <div class="d-flex">
         <div class="mr-auto">
-          <h2>{{ store.friendlyNamesMap[name] || "Unknown friendly room name" }}</h2>
+          <h2>{{ store.state.friendlyNamesMap[name] || "Unknown friendly room name" }}</h2>
         </div>
         <div>
           <div v-if="store.getDataForRoom(name) !== null && store.getDataForRoom(name).updating">
@@ -39,29 +39,29 @@
     <template v-else>
       <v-card-item>
         <h2>
-          {{ store.environmentData[name].temperature.current.toFixed(1) }}
-          <span v-html="store.environmentData[name].temperature.units"></span>
+          {{ store.state.environmentData[name].temperature.current.toFixed(1) }}
+          <span v-html="store.state.environmentData[name].temperature.units"></span>
           <template v-if="isUsingFahrenheit()">
             <span class="font-weight-regular text-grey">
-              / {{ fahrenheitToCelsius(store.environmentData[name].temperature.current).toFixed(1) }} &deg;C
+              / {{ fahrenheitToCelsius(store.state.environmentData[name].temperature.current).toFixed(1) }} &deg;C
             </span>
           </template>
         </h2>
         <MulticolorProgressBar :min="minTemp" :max="maxTemp"
-                               :warning="store.environmentData[name].temperature.maxWThresh"
-                               :critical="store.environmentData[name].temperature.maxThresh"
-                               :value="store.environmentData[name].temperature.current"/>
+                               :warning="store.state.environmentData[name].temperature.maxWThresh"
+                               :critical="store.state.environmentData[name].temperature.maxThresh"
+                               :value="store.state.environmentData[name].temperature.current"/>
       </v-card-item>
       <v-card-item>
         <h2>
-          {{ store.environmentData[name].humidity.current.toFixed(1) }}%
+          {{ store.state.environmentData[name].humidity.current.toFixed(1) }}%
           <span class="font-weight-regular text-grey" v-if="$vuetify.display.xs">RH</span>
           <span class="font-weight-regular text-grey" v-else>Relative Humidity</span>
         </h2>
         <MulticolorProgressBar :min="0" :max="100"
-                               :warning="store.environmentData[name].humidity.maxWThresh"
-                               :critical="store.environmentData[name].humidity.maxThresh"
-                               :value="store.environmentData[name].humidity.current"/>
+                               :warning="store.state.environmentData[name].humidity.maxWThresh"
+                               :critical="store.state.environmentData[name].humidity.maxThresh"
+                               :value="store.state.environmentData[name].humidity.current"/>
       </v-card-item>
       <v-card-item>
         <slot></slot>
@@ -108,8 +108,8 @@ function calculateBarColor(data: Map<string, any>) {
 }
 
 function isUsingFahrenheit(): boolean {
-  return store.environmentData[props.name].temperature.units === "&deg;F" ||
-      store.environmentData[props.name].temperature.units === "°F"
+  return store.state.environmentData[props.name].temperature.units === "&deg;F" ||
+      store.state.environmentData[props.name].temperature.units === "°F"
 }
 
 function fahrenheitToCelsius(fahrenheit: number): number {

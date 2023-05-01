@@ -4,10 +4,13 @@ import {computed, reactive, ref, watch} from "vue";
 import {io} from "socket.io-client";
 
 export const useEnvironmentDataStore = defineStore('environmentData', () => {
-    const environmentData = reactive(<Map<string, Map<string, any>>>{}); // Room name -> Dict
-    const rooms = reactive<Array<Map<string, string>>>([]);
-    const friendlyNamesMap = reactive({});
-    const websocketConnected = ref(false);
+    // Old variables were environmentData, rooms, friendlyNamesMap, and websocketConnected
+    const state = reactive({
+        "environmentData": {},
+        "rooms": [],
+        "friendlyNamesMap": {},
+        "websocketConnected": false
+    });
 
     const socket = io(":8085", {transports: ['websocket']});
     socket.on("data", (data: Map<string, Map<string, Map<string, any>>>) => {
@@ -16,44 +19,45 @@ export const useEnvironmentDataStore = defineStore('environmentData', () => {
     })
 
     socket.on("connect", () => {
-        websocketConnected.value = true;
+        state.websocketConnected = true;
         updateRooms()
     })
 
     socket.on("disconnect", () => {
-        websocketConnected.value = false;
+        state.websocketConnected = false;
     })
 
     function updateRooms() {
         // Create a GET request to fetch the list of rooms from the backend and populate data.rooms
         fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/rooms`)
             .then(res => res.json())
-            .then(json => {
-                Object.assign(rooms, json.rooms)
-            })
+            .then(json => state.rooms = json.rooms)
     }
 
     function onUpdate(data: Map<string, Map<string, any>>) {
         // @ts-ignore
         for (const [roomName, roomData] of Object.entries(data)) {
             // @ts-ignore
-            environmentData[roomName] = roomData;
+            state.environmentData[roomName] = roomData;
         }
     }
 
     function getDataForRoom(roomName: string): Map<string, any> | null {
         // @ts-ignore
-        return environmentData[roomName] || null
+        return state.environmentData[roomName] || null
     }
 
-    watch(rooms, (newVal, oldVal) => {
-        for (const i in newVal) {
-            const name = newVal[i].name
-            const friendly_name = newVal[i].friendly_name
-            friendlyNamesMap[name] = friendly_name
+    watch(state, (newVal, oldVal) => {
+        for (const i in newVal.rooms) {
+            // @ts-ignore
+            const name = newVal.rooms[i].name
+            // @ts-ignore
+            const friendly_name = newVal.rooms[i].friendly_name
+            // @ts-ignore
+            state.friendlyNamesMap[name] = friendly_name
         }
     })
 
 
-    return {environmentData, rooms, updateRooms, onUpdate, getDataForRoom, friendlyNamesMap, websocketConnected}
+    return {state, updateRooms, onUpdate, getDataForRoom}
 })

@@ -19,17 +19,17 @@ setInterval(() => {
 
 const timeSinceUpdate = computed(() => {
   // Return the time since the last data update in milliseconds
-  const dataTime = new Date(Date.parse(environmentDataStore.environmentData.time))
+  const dataTime = new Date(Date.parse(environmentDataStore.state.environmentData.time))
   return now.value.getTime() - dataTime.getTime()
 })
 
 const dataIsStale = computed(() => {
-  return timeSinceUpdate.value > 15_000 || environmentDataStore.environmentData.time === undefined
+  return timeSinceUpdate.value > 15_000 || environmentDataStore.state.environmentData.time === undefined
 })
 
 // Represent the time since the last update in a human-readable format
 const timeSinceUpdateString = computed(() => {
-  if (environmentDataStore.environmentData.time === undefined) {
+  if (environmentDataStore.state.environmentData.time === undefined) {
     return "never"
   }
   const seconds = Math.floor(timeSinceUpdate.value / 1000)
@@ -62,14 +62,14 @@ const timeSinceUpdateString = computed(() => {
         </v-tab>
 
         <v-tab class="rounded-0" :to="{name: 'room', params: {room: room.name}}"
-               v-for="room in environmentDataStore.rooms" :key="room.name">
+               v-for="room in environmentDataStore.state.rooms" :key="room.name">
           {{ room.friendly_name }}
         </v-tab>
       </v-tabs>
     </v-app-bar>
     <v-main>
 
-      <div class="d-flex align-center flex-column" v-if="!environmentDataStore.websocketConnected">
+      <div class="d-flex align-center flex-column" v-if="!environmentDataStore.state.websocketConnected">
         <v-card class="pa-8 ma-4">
           <h1>Connecting to WebSocket...</h1>
           <p>If this takes too long, ensure the backend API is running.</p>
@@ -83,13 +83,13 @@ const timeSinceUpdateString = computed(() => {
         <template v-if="dataIsStale">
           <v-alert title="Data is outdated!" color="red" icon="mdi-clock-alert" max-width="700"
                    prominent>
-            Last updated at {{ formatDate(environmentDataStore.environmentData.time) }} ({{ timeSinceUpdateString }})
+            Last updated at {{ formatDate(environmentDataStore.state.environmentData.time) }} ({{ timeSinceUpdateString }})
           </v-alert>
         </template>
         <template v-else>
           <v-alert title="Up to date!" color="green" icon="mdi-clock-check" variant="outlined" max-width="700"
                    prominent>
-            Last updated at {{ formatDate(environmentDataStore.environmentData.time) }} ({{ timeSinceUpdateString }})
+            Last updated at {{ formatDate(environmentDataStore.state.environmentData.time) }} ({{ timeSinceUpdateString }})
           </v-alert>
         </template>
       </div>

@@ -26,11 +26,26 @@
 import {computed} from "vue";
 
 const props = defineProps({
-  min: Number,
-  warning: Number,
-  critical: Number,
-  max: Number,
-  value: Number
+  min: {
+    type: Number,
+    required: true
+  },
+  warning: {
+    type: Number,
+    required: true
+  },
+  critical: {
+    type: Number,
+    required: true
+  },
+  max: {
+    type: Number,
+    required: true
+  },
+  value: {
+    type: Number,
+    required: true
+  }
 })
 
 const normalBarStyle = computed(() => {
