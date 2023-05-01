@@ -4,7 +4,7 @@
     <Monitor :name="$route.params.room" class="flex-shrink-0">
       <MonitorExtendedAttributes :room="$route.params.room"/>
     </Monitor>
-    <HistoryChart  class="flex-shrink-1" />
+    <HistoryChart class="flex-shrink-1"/>
   </div>
 
   <v-expansion-panels class="pa-4">

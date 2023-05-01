@@ -1,14 +1,19 @@
 <template>
   <div class="charts-div">
     <!--    <h1>Charts!</h1>-->
-    <div class="d-flex flex-row align-center">
+    <div class="d-flex flex-row flex-wrap align-center">
       <h3 class="py-2">History Chart of Past</h3>
       <!--      <v-text-field class="mx-2" style="max-width: 50px" variant="underlined" type="number" v-model="days"-->
       <!--                    @change="reloadChart"></v-text-field>-->
       <!--      The Vuetify number input raises an exception when changing the number, so we'll use the uglier default one -->
-      <input class="mx-2" style="max-width: 50px" type="number" v-model="data.days" @change="reloadChart"/>
-      <h3 class="py-2">{{ data.days !== 1 ? "Days" : "Day" }} for
+      <input min="1" class="mx-2" style="max-width: 50px" type="number" v-model="data.timeCount" @change="reloadChart"/>
+      <!--      Allow selecting days or hours -->
+      <v-select variant="plain" class="mx-2" style="max-width: 70px" v-model="data.timeUnitSelection"
+                :items="dynamicTimeOptions" @change="reloadChart"/>
+      <!--      <h3 class="py-2">{{ data.timeCount !== 1 ? "Days" : "Day" }}-->
+      <h3 class="py-2">for
         {{ store.getDataForRoom(data.roomName)?.friendly_name || `"${data.roomName}"` }}</h3>
+      <v-btn class="ml-auto pa-2 ma-2" icon="mdi-refresh" @click="reloadChart"/>
     </div>
 
     <div v-if="data.loadingData" class="d-flex justify-center align-center">
@@ -49,15 +54,52 @@ ChartJS.register(
     Legend
 );
 
+const timeUnits = {
+  "singular": ["day", "hour"],
+  "plural": ["days", "hours"]
+}
+
 const data = reactive({
   loadingData: false,
   fetchedData: [],
+  autoScale: true,
   roomName: '',
-  days: 1,
-  autoScale: true
+  timeCount: 1,
+  timeUnit: timeUnits.singular[0],  // Always singular
+  timeUnitSelection: timeUnits.singular[0], // May be singular or plural
+
 })
 
 const store = useEnvironmentDataStore()
+
+const dynamicTimeOptions = computed(() => {
+  return data.timeCount > 1 ? timeUnits.plural : timeUnits.singular
+})
+
+
+function updateTimeUnit() {
+  // Runs when the user changes the time count
+
+  // Update the front end display of the time unit
+  const isPlural = data.timeCount > 1
+  const selectedTimeUnit = data.timeUnitSelection
+  let selectedTimeUnitIndex = timeUnits.singular.indexOf(selectedTimeUnit)
+  if (selectedTimeUnitIndex === -1) {
+    selectedTimeUnitIndex = timeUnits.plural.indexOf(selectedTimeUnit)
+  }
+
+  if (isPlural) {
+    data.timeUnitSelection = timeUnits.plural[selectedTimeUnitIndex]
+  } else {
+    data.timeUnitSelection = timeUnits.singular[selectedTimeUnitIndex]
+  }
+
+  // Update the time unit on the backend to be the singular form of the selected time unit
+  data.timeUnit = timeUnits.singular[selectedTimeUnitIndex]
+}
+
+
+watch(() => data.timeCount, updateTimeUnit)
 
 const historyChart = computed(() => {
   return {
@@ -90,7 +132,7 @@ const chartOptions = computed(() => {
       x: {
         type: 'time',
         time: {
-          unit: data.days > 2 ? 'day' : 'hour',
+          unit: data.timeUnit === "day" ? 'day' : 'hour',
         }
       }
     },
@@ -109,7 +151,7 @@ function getHistoricData(room: string, days: number) {
 }
 
 function reloadChart() {
-  getHistoricData(data.roomName, data.days)
+  getHistoricData(data.roomName, data.timeCount)
 }
 
 
