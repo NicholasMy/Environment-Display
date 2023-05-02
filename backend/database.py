@@ -94,9 +94,7 @@ class Record(Base):
             #     additional_records = results.filter(Record not in stepped_records.all())
             #     return stepped_records.all() + additional_records.all()
 
-            return stepped_records.all()
-
-
+            return stepped_records.limit(max_records)
 
     @staticmethod
     def get_json_for_monitor(monitor: str, hours: int = 1, max_records: int = 1000):
