@@ -18,6 +18,7 @@ while not connection:
         connection = engine.connect()
     except Exception as e:
         print("Waiting for database to start...")
+        print(e)
         time.sleep(2)
 
 print("Connected to database")
@@ -67,19 +68,39 @@ class Record(Base):
         return record
 
     @staticmethod
-    def get_recent_for_monitor(monitor: str, days: int = 1):
-        earliest = datetime.now() - timedelta(days=days)
+    def get_recent_for_monitor(monitor: str, hours: int = 1, max_records: int = 1000):
+        earliest = datetime.now() - timedelta(hours=hours)
         with get_session() as session:
-            return session.query(Record).filter(
+            results = session.query(Record).filter(
                 and_(
                     Record.monitor == monitor,
                     Record.timestamp >= earliest
                 )
-            ).all()
+            )
+
+            count = results.count()
+
+            if count <= max_records or max_records == 0:
+                return results.all()
+
+            # Too many records, return evenly spaced records
+            step = count // max_records
+            stepped_records = results.filter(Record.id % step == 0)
+
+            # TODO try to get the perfect number of records
+            # stepped_count = results.count()
+            # missing_records = max_records - stepped_count
+            # if missing_records > 0:
+            #     additional_records = results.filter(Record not in stepped_records.all())
+            #     return stepped_records.all() + additional_records.all()
+
+            return stepped_records.all()
+
+
 
     @staticmethod
-    def get_json_for_monitor(monitor: str, days: int = 1):
-        records = Record.get_recent_for_monitor(monitor, days)
+    def get_json_for_monitor(monitor: str, hours: int = 1, max_records: int = 1000):
+        records = Record.get_recent_for_monitor(monitor, hours, max_records)
         return json.dumps([record.to_json() for record in records])
 
 
