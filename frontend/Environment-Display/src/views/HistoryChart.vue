@@ -9,7 +9,7 @@
       <input min="1" class="mx-2" style="max-width: 50px" type="number" v-model="data.timeCount" @change="reloadChart"/>
       <!--      Allow selecting days or hours -->
       <v-select variant="plain" class="mx-2" style="max-width: 70px" v-model="data.timeUnitSelection"
-                :items="dynamicTimeOptions" @change="reloadChart"/>
+                :items="dynamicTimeOptions" @update:modelValue="reloadChart"/>
       <!--      <h3 class="py-2">{{ data.timeCount !== 1 ? "Days" : "Day" }}-->
       <h3 class="py-2">for
         {{ store.getDataForRoom(data.roomName)?.friendly_name || `"${data.roomName}"` }}</h3>
@@ -55,8 +55,8 @@ ChartJS.register(
 );
 
 const timeUnits = {
-  "singular": ["day", "hour"],
-  "plural": ["days", "hours"]
+  "singular": ["Day", "Hour"],
+  "plural": ["Days", "Hours"]
 }
 
 const data = reactive({
@@ -65,8 +65,8 @@ const data = reactive({
   autoScale: true,
   roomName: '',
   timeCount: 1,
-  timeUnit: timeUnits.singular[0],  // Always singular
-  timeUnitSelection: timeUnits.singular[0], // May be singular or plural
+  timeUnit: timeUnits.singular[0],  // Always singular and lowercase
+  timeUnitSelection: timeUnits.singular[0], // May be singular or plural and capitalized
 
 })
 
@@ -95,7 +95,7 @@ function updateTimeUnit() {
   }
 
   // Update the time unit on the backend to be the singular form of the selected time unit
-  data.timeUnit = timeUnits.singular[selectedTimeUnitIndex]
+  data.timeUnit = timeUnits.singular[selectedTimeUnitIndex].toLowerCase()
 }
 
 
@@ -151,6 +151,7 @@ function getHistoricData(room: string, hours: number) {
 }
 
 function reloadChart() {
+  updateTimeUnit()
   const hours = data.timeUnit === "day" ? data.timeCount * 24 : data.timeCount
   getHistoricData(data.roomName, hours)
 }
