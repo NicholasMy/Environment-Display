@@ -10,7 +10,7 @@ from backend.EnvironmentalMonitor import EnvironmentalMonitor
 class NTIEnvironmentMonitor(EnvironmentalMonitor):
 
     def __init__(self, name: str, friendly_name: str, url: str, username: str, password: str,
-                 reboot_hours: float = 24.0):
+                 reboot_hours: float = 24.0, sensor_id: int = 0):
         # The URL should look like "https://temp-davis-339e.cse.buffalo.edu/"
         super().__init__()
         self.name = name
@@ -22,6 +22,7 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         self.session_cookie = None
         self.last_reboot = datetime.now()
         self.rebooting = False
+        self.sensor_id = sensor_id
 
     def get_seconds_since_last_reboot(self):
         return (datetime.now() - self.last_reboot).seconds
@@ -94,8 +95,8 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         if not self.session_cookie:
             self.create_session()
 
-        temperature_url = self.url + "goform/sensorStatus?id=0"
-        humidity_url = self.url + "goform/sensorStatus?id=1"
+        temperature_url = self.url + "goform/sensorStatus?id=" + str(self.sensor_id)
+        humidity_url = self.url + "goform/sensorStatus?id=" + str(self.sensor_id + 1)
 
         try:
             temperature_data = requests.get(temperature_url,
