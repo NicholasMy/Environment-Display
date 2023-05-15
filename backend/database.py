@@ -1,4 +1,5 @@
 import json
+import random
 import time
 from datetime import datetime, timedelta
 from operator import and_
@@ -87,19 +88,20 @@ class Record(Base):
             step = count // max_records
             stepped_records = results.filter(Record.id % step == 0)
 
-            # TODO try to get the perfect number of records
-            # stepped_count = results.count()
-            # missing_records = max_records - stepped_count
-            # if missing_records > 0:
-            #     additional_records = results.filter(Record not in stepped_records.all())
-            #     return stepped_records.all() + additional_records.all()
-
             return stepped_records.limit(max_records)
 
     @staticmethod
     def get_json_for_monitor(monitor: str, hours: int = 1, max_records: int = 1000):
-        records = Record.get_recent_for_monitor(monitor, hours, max_records)
-        return json.dumps([record.to_json() for record in records])
+        records = Record.get_recent_for_monitor(monitor, hours, 0)  # Get all records within the time range
+        number_of_records = len(records)
+        # Fetch a random sample of number_of_records - 2 records
+        indices_to_keep = set(
+            random.sample(range(1, number_of_records - 1), max(min(number_of_records, max_records) - 2, 0)))
+        # Force the first and last record to be included
+        if number_of_records > 0:
+            indices_to_keep.add(0)
+            indices_to_keep.add(number_of_records - 1)
+        return json.dumps([record.to_json() for i, record in enumerate(records) if i in indices_to_keep])
 
 
 def initialize_database():
