@@ -94,6 +94,11 @@ class Record(Base):
     def get_json_for_monitor(monitor: str, hours: int = 1, max_records: int = 1000):
         records = Record.get_recent_for_monitor(monitor, hours, 0)  # Get all records within the time range
         number_of_records = len(records)
+
+        if max_records == 0:
+            # Return every record
+            return json.dumps([record.to_json() for record in records])
+
         # Fetch a random sample of number_of_records - 2 records
         indices_to_keep = set(
             random.sample(range(1, number_of_records - 1), max(min(number_of_records, max_records) - 2, 0)))
