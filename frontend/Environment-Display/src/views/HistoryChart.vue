@@ -78,6 +78,7 @@ const data = reactive({
   timeUnit: timeUnits.singular[0],  // Always singular and lowercase
   timeUnitSelection: timeUnits.singular[0], // May be singular or plural and capitalized
   resolution: 1000,
+  loadingKey: 0  // Only stop loading once the most recent request has finished to avoid the chart flickering "old" data
 })
 
 const store = useEnvironmentDataStore()
@@ -154,10 +155,16 @@ const chartOptions = computed(() => {
 
 function getHistoricData(room: string, hours: number, resolution: number) {
   data.loadingData = true
+  data.loadingKey++
+  const thisRequestKey = data.loadingKey
   fetch(`${window.location.protocol + "//" + window.location.hostname}:8085/history/${room}/${hours}/${resolution}`)
       .then(res => res.json())
       .then(newData => data.fetchedData = newData)
-      .then(() => data.loadingData = false)
+      .then(() => {
+        if (data.loadingKey === thisRequestKey) {
+          data.loadingData = false
+        }
+      })
 }
 
 function reloadChart() {
