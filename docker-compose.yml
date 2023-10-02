@@ -4,8 +4,8 @@ services:
   backend:
     build: backend
     restart: unless-stopped
-    #    ports:
-    #      - "8085:8085"  # Uncomment this for local debugging, but don't bind to host in production
+    ports:
+      - "127.0.0.1:8002:8085"
     expose:
       - "8085"
     environment:
