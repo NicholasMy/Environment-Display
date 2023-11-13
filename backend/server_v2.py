@@ -30,12 +30,12 @@ def __get_failure_dictionary():
 
 monitors: List[EnvironmentalMonitor] = [
     NTIEnvironmentMonitor("davis339a", "Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 4.0),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 2.0),
     # MockEnvironmentMonitor("mockdavis339a", "Mock Davis 339A", "https://temp-davis-339a.cse.buffalo.edu/", 3.0),
     NTIEnvironmentMonitor("davis339c", "Davis 339C", "https://temp-davis-339c.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 4.1),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 2.1),
     NTIEnvironmentMonitor("davis339e", "Davis 339E North", "https://temp-davis-339e.cse.buffalo.edu/",
-                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 4.2),
+                          secrets.NTI_USERNAME, secrets.NTI_PASSWORD, 2.2),
     OlderNTIEnvironmentMonitor("davis339a_old", "Davis 339A Hot Aisle", "http://enviromux-davis-339a.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339c_old", "Davis 339C Hot Aisle", "http://enviromux-davis-339c.cse.buffalo.edu/"),
     OlderNTIEnvironmentMonitor("davis339e_old", "Davis 339E South", "http://enviromux-davis-339e.cse.buffalo.edu/"),
