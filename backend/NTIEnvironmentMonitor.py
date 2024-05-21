@@ -57,6 +57,8 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
         self.last_reboot = datetime.now()
 
     def reboot_necessary(self) -> bool:
+        if self.reboot_hours <= 0.0:
+            return False
         return (datetime.now() - self.last_reboot).seconds / 60 / 60 > self.reboot_hours
 
     def reboot_if_needed(self):
@@ -64,6 +66,8 @@ class NTIEnvironmentMonitor(EnvironmentalMonitor):
             self.reboot()
 
     def get_seconds_to_next_reboot(self):
+        if self.reboot_hours <= 0.0:
+            return -1.0
         return self.reboot_hours * 60 * 60 - (datetime.now() - self.last_reboot).seconds
 
     def create_session(self):
